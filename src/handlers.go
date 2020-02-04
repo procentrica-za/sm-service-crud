@@ -22,8 +22,9 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Error in communicating with database to login user")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to login user")
 			return
 		}
 		loginUserResult := LoginUserResult{}
@@ -64,6 +65,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to delete user")
 			return
 		}
 
@@ -111,6 +113,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to update user")
 			return
 		}
 
@@ -153,6 +156,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to register user")
 			return
 		}
 
@@ -190,6 +194,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to get user")
 			return
 		}
 		//fmt.Println("This is User!: " + id)
