@@ -104,8 +104,9 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 		}
 
 		var userUpdated bool
+		var msg string
 		querystring := "SELECT * FROM public.updateuser('" + user.UserID + "','" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
-		err = s.dbAccess.QueryRow(querystring).Scan(&userUpdated)
+		err = s.dbAccess.QueryRow(querystring).Scan(&userUpdated, &msg)
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -116,7 +117,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 
 		updateUserResult := UpdateUserResult{}
 		updateUserResult.UserUpdated = userUpdated
-		updateUserResult.Message = "User successfully updated!"
+		updateUserResult.Message = msg
 
 		js, jserr := json.Marshal(updateUserResult)
 
@@ -144,10 +145,10 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 			return
 		}
 		var userCreated string
-		var username, userid string
+		var username, userid, msg string
 
 		querystring := "SELECT * FROM public.registeruser('" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
-		err = s.dbAccess.QueryRow(querystring).Scan(&userCreated, &username, &userid)
+		err = s.dbAccess.QueryRow(querystring).Scan(&userCreated, &username, &userid, &msg)
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -160,6 +161,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 		regUserResult.UserCreated = userCreated
 		regUserResult.Username = username
 		regUserResult.UserID = userid
+		regUserResult.Message = msg
 
 		js, jserr := json.Marshal(regUserResult)
 
