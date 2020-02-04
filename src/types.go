@@ -65,6 +65,7 @@ type RegisterUserResult struct {
 	UserCreated string `json:"usercreated"`
 	Username    string `json:"username"`
 	UserID      string `json:"id"`
+	Message     string `json:"message"`
 }
 
 type Config struct {
