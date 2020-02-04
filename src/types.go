@@ -12,9 +12,13 @@ type Server struct {
 }
 
 type UserID struct {
-	UserID string `json:userid`
+	UserID string `json:"id"`
 }
 
+type UserLogin struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -24,7 +28,7 @@ type User struct {
 }
 
 type getUser struct {
-	UserID   string `json:id`
+	UserID   string `json:"id"`
 	Username string `json:"username"`
 	Name     string `json:"name"`
 	Surname  string `json:"surname"`
@@ -32,7 +36,7 @@ type getUser struct {
 }
 
 type updateUser struct {
-	UserID   string `json:id`
+	UserID   string `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
@@ -41,17 +45,26 @@ type updateUser struct {
 }
 
 type UpdateUserResult struct {
-	UserUpdated bool `json:"userupdated"`
+	UserUpdated bool   `json:"userupdated"`
+	Message     string `json:"message"`
 }
 
 type DeleteUserResult struct {
-	UserDeleted bool `json:"userdeleted"`
+	UserDeleted bool   `json:"userdeleted"`
+	UserID      string `json:"id"`
+	Message     string `json:"message"`
+}
+
+type LoginUserResult struct {
+	UserLoggedIn bool   `json:"userloggedin"`
+	UserID       string `json:"id"`
+	Message      string `json:"message"`
 }
 
 type RegisterUserResult struct {
-	UserCreated bool   `json:"usercreated"`
+	UserCreated string `json:"usercreated"`
 	Username    string `json:"username"`
-	UserID      string `json:"userid"`
+	UserID      string `json:"id"`
 }
 
 type Config struct {
