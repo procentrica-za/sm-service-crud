@@ -78,20 +78,42 @@ type PostAdvertisement struct {
 }
 
 type PostAdvertisementResult struct {
-	AdvertisementPosted bool   `json:"result"`
+	AdvertisementPosted bool   `json:"advertisementposted"`
 	ID                  string `json:"id"`
 	Message             string `json:"message"`
 }
 
 type UpdateAdvertisement struct {
-	Price       string `json:"price"`
-	Description string `json:"description"`
+	AdvertisementID   string `json:"id"`
+	UserID            string `json:"userid"`
+	AdvertisementType string `json:"advertisementtype"`
+	EntityID          string `json:"entityid"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
 }
 
 type UpdateAdvertisementResult struct {
-	AdvertisementUpdated string `json:"advertisementupdated"`
-	ID                   string `json:"id"`
+	AdvertisementUpdated bool   `json:"advertisementupdated"`
 	Message              string `json:"message"`
+}
+
+type DeleteAdvertisementResult struct {
+	AdvertisementDeleted bool   `json:"advertisementdeleted"`
+	AdvertisementID      string `json:"id"`
+	Message              string `json:"message"`
+}
+
+type AdvertisementID struct {
+	AdvertisementID string `json:"id"`
+}
+
+type getAdvertisement struct {
+	AdvertisementID   string `json:"id"`
+	UserID            string `json:"userid"`
+	AdvertisementType string `json:"advertisementtype"`
+	EntityID          string `json:"entityid"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
 }
 
 type Config struct {

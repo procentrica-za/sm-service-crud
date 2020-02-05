@@ -40,7 +40,7 @@ func (s *Server) handlepostadvertisement() http.HandlerFunc {
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result to register user")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to post advert")
 			return
 		}
 
@@ -52,35 +52,36 @@ func (s *Server) handlepostadvertisement() http.HandlerFunc {
 
 func (s *Server) handlegetadvertisement() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Get User Has Been Called...")
-		getuserid := r.URL.Query().Get("id")
-		userid := UserID{}
-		userid.UserID = getuserid
+		fmt.Println("Handle Get Advert Has Been Called...")
+		getadvertisementid := r.URL.Query().Get("id")
+		advertisementid := AdvertisementID{}
+		advertisementid.AdvertisementID = getadvertisementid
 
-		var id, username, name, surname, email string
+		var id, userid, advertisementtype, entityid, price, description string
 
-		querystring := "SELECT * FROM public.getuser('" + userid.UserID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email)
+		querystring := "SELECT * FROM public.getadvertisement('" + advertisementid.AdvertisementID + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &userid, &advertisementtype, &entityid, &price, &description)
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to get user")
+			fmt.Fprintf(w, "Unable to process DB Function to get advertisement")
 			fmt.Println(err.Error())
-			fmt.Println("Error in communicating with database to get user")
+			fmt.Println("Error in communicating with database to get advertisement")
 			return
 		}
-		//fmt.Println("This is User!: " + id)
-		user := getUser{}
-		user.UserID = id
-		user.Username = username
-		user.Name = name
-		user.Surname = surname
-		user.Email = email
+		//fmt.Println("This is Advertisement!: " + id)
+		advertisement := getAdvertisement{}
+		advertisement.AdvertisementID = id
+		advertisement.UserID = userid
+		advertisement.AdvertisementType = advertisementtype
+		advertisement.EntityID = entityid
+		advertisement.Price = price
+		advertisement.Description = description
 
-		js, jserr := json.Marshal(user)
+		js, jserr := json.Marshal(advertisement)
 		fmt.Println(js)
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to get advertisement")
 			return
 		}
 
@@ -92,37 +93,37 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 
 func (s *Server) handleupdateadvertisement() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Update User Has Been Called...")
-		user := updateUser{}
-		err := json.NewDecoder(r.Body).Decode(&user)
+		fmt.Println("Handle Update Advertisement Has Been Called...")
+		advertisement := UpdateAdvertisement{}
+		err := json.NewDecoder(r.Body).Decode(&advertisement)
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to update user")
+			fmt.Fprintf(w, "Bad JSON provided to update advertisement")
 			return
 		}
 
-		var userUpdated bool
+		var advertisementupdated bool
 		var msg string
-		querystring := "SELECT * FROM public.updateuser('" + user.UserID + "','" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
-		err = s.dbAccess.QueryRow(querystring).Scan(&userUpdated, &msg)
+		querystring := "SELECT * FROM public.updateadvertisement('" + advertisement.AdvertisementID + "','" + advertisement.UserID + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "')"
+		err = s.dbAccess.QueryRow(querystring).Scan(&advertisementupdated, &msg)
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to update user")
+			fmt.Fprintf(w, "Unable to process DB Function to update advertisement")
 			fmt.Println(err.Error())
-			fmt.Println("Error in communicating with database to update user")
+			fmt.Println("Error in communicating with database to update advertisement")
 			return
 		}
 
-		updateUserResult := UpdateUserResult{}
-		updateUserResult.UserUpdated = userUpdated
-		updateUserResult.Message = msg
+		updateAdvertisementResult := UpdateAdvertisementResult{}
+		updateAdvertisementResult.AdvertisementUpdated = advertisementupdated
+		updateAdvertisementResult.Message = msg
 
-		js, jserr := json.Marshal(updateUserResult)
+		js, jserr := json.Marshal(updateAdvertisementResult)
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result to update user")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update advertisement")
 			return
 		}
 
@@ -134,38 +135,38 @@ func (s *Server) handleupdateadvertisement() http.HandlerFunc {
 
 func (s *Server) handleremoveadvertisement() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Delete User Has Been Called..")
-		getuserid := r.URL.Query().Get("id")
-		userid := UserID{}
-		userid.UserID = getuserid
+		fmt.Println("Handle Delete Advert Has Been Called..")
+		getadvertisementid := r.URL.Query().Get("id")
+		advertisementid := AdvertisementID{}
+		advertisementid.AdvertisementID = getadvertisementid
 
-		var userDeleted bool
-		querystring := "SELECT * FROM public.deleteuser('" + userid.UserID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&userDeleted)
+		var advertisementDeleted bool
+		querystring := "SELECT * FROM public.deleteadvertisement('" + advertisementid.AdvertisementID + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&advertisementDeleted)
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to delete user")
+			fmt.Fprintf(w, "Unable to process DB Function to delete advertisement")
 			fmt.Println(err.Error())
-			fmt.Println("Error in communicating with database to delete user")
+			fmt.Println("Error in communicating with database to delete advertisement")
 			return
 		}
 
-		deleteUserResult := DeleteUserResult{}
-		deleteUserResult.UserDeleted = userDeleted
-		deleteUserResult.UserID = getuserid
+		deleteAdvertisementResult := DeleteAdvertisementResult{}
+		deleteAdvertisementResult.AdvertisementDeleted = advertisementDeleted
+		deleteAdvertisementResult.AdvertisementID = getadvertisementid
 
-		if userDeleted {
-			deleteUserResult.Message = "User Successfully Deleted!"
+		if advertisementDeleted {
+			deleteAdvertisementResult.Message = "Advert Successfully Deleted!"
 		} else {
-			deleteUserResult.Message = "Unable to Delete User!"
+			deleteAdvertisementResult.Message = "Unable to Delete Advert!"
 		}
 
-		js, jserr := json.Marshal(deleteUserResult)
+		js, jserr := json.Marshal(deleteAdvertisementResult)
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete user")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete advert")
 			return
 		}
 
