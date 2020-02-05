@@ -68,6 +68,32 @@ type RegisterUserResult struct {
 	Message     string `json:"message"`
 }
 
+//advert crud
+type PostAdvertisement struct {
+	UserID            string `json:"userid"`
+	AdvertisementType string `json:"advertisementtype"`
+	EntityID          string `json:"entityid"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
+}
+
+type PostAdvertisementResult struct {
+	AdvertisementPosted bool   `json:"result"`
+	ID                  string `json:"id"`
+	Message             string `json:"message"`
+}
+
+type UpdateAdvertisement struct {
+	Price       string `json:"price"`
+	Description string `json:"description"`
+}
+
+type UpdateAdvertisementResult struct {
+	AdvertisementUpdated string `json:"advertisementupdated"`
+	ID                   string `json:"id"`
+	Message              string `json:"message"`
+}
+
 type Config struct {
 	UserName     string
 	Password     string
