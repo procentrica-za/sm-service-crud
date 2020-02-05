@@ -22,8 +22,9 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Error in communicating with database to login user")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to login user")
 			return
 		}
 		loginUserResult := LoginUserResult{}
@@ -41,7 +42,7 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result...")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to log user in")
 			return
 		}
 
@@ -64,8 +65,9 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Unable to process DB Function to delete user")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to delete user")
 			return
 		}
 
@@ -83,7 +85,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result...")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete user")
 			return
 		}
 
@@ -101,7 +103,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&user)
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided...")
+			fmt.Fprintf(w, "Bad JSON provided to update user")
 			return
 		}
 
@@ -112,8 +114,9 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Unable to process DB Function to update user")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to update user")
 			return
 		}
 
@@ -125,7 +128,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result...")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update user")
 			return
 		}
 
@@ -143,7 +146,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided...")
+			fmt.Fprintf(w, "Bad JSON provided to register user ")
 			return
 		}
 		var userCreated string
@@ -154,8 +157,9 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Unable to process DB Function to register user")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to register user")
 			return
 		}
 
@@ -169,7 +173,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result...")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to register user")
 			return
 		}
 
@@ -192,11 +196,11 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email)
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Unable to process DB Function to get user")
 			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to get user")
 			return
 		}
-		//fmt.Println("This is User!: " + id)
 		user := getUser{}
 		user.UserID = id
 		user.Username = username
@@ -208,7 +212,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		fmt.Println(js)
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result...")
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
 			return
 		}
 
