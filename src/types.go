@@ -68,11 +68,16 @@ type RegisterUserResult struct {
 	Message     string `json:"message"`
 }
 
+type dbConfig struct {
+	UserName        string
+	Password        string
+	DatabaseName    string
+	Port            string
+	PostgresHost    string
+	PostgresPort    string
+	ListenServePort string
+}
+
 type Config struct {
-	UserName     string
-	Password     string
-	DatabaseName string
-	Port         string
-	PostgresHost string
-	PostgresPort string
+	ListenServePort string
 }

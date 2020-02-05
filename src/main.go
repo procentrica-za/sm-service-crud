@@ -13,14 +13,16 @@ import (
 	"github.com/lib/pq"
 )
 
-var dbconf Config
+var dbconf dbConfig
+var conf Config
 
 func init() {
-	dbconf = CreateConfig()
+	dbconf = CreateDbConfig()
+	conf = CreateConfig()
 }
 
-func CreateConfig() Config {
-	conf := Config{
+func CreateDbConfig() dbConfig {
+	dbconf := dbConfig{
 		UserName:     os.Getenv("POSTGRES_USERNAME"),
 		Password:     os.Getenv("POSTGRES_PASSWORD"),
 		DatabaseName: os.Getenv("DATABASENAME"),
@@ -28,8 +30,15 @@ func CreateConfig() Config {
 		PostgresHost: os.Getenv("POSTGRESHOST"),
 		PostgresPort: os.Getenv("POSTGRESPORT"),
 	}
-	return conf
+	return dbconf
 
+}
+
+func CreateConfig() Config {
+	conf := Config{
+		ListenServePort: os.Getenv("LISTEN_AND_SERVE_PORT"),
+	}
+	return conf
 }
 
 func openDatabase(host string, port string, user string, password string, dbname string) (*sql.DB, error) {
@@ -76,8 +85,8 @@ func main() {
 	server.routes()
 	handler := removeTrailingSlash(server.router)
 
-	fmt.Printf("starting server on port 8080 .... \n")
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	fmt.Printf("starting server on port " + conf.ListenServePort + " .... \n")
+	log.Fatal(http.ListenAndServe(":"+conf.ListenServePort, handler))
 }
 
 func removeTrailingSlash(next http.Handler) http.Handler {
