@@ -30,6 +30,8 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 		loginUserResult := LoginUserResult{}
 		if userid == "" {
 			loginUserResult.UserLoggedIn = false
+			loginUserResult.UserID = ""
+			loginUserResult.Message = "Wrong username or password combination!"
 		} else {
 			loginUserResult.UserLoggedIn = true
 			loginUserResult.UserID = userid
@@ -199,7 +201,6 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 			fmt.Println("Error in communicating with database to get user")
 			return
 		}
-		//fmt.Println("This is User!: " + id)
 		user := getUser{}
 		user.UserID = id
 		user.Username = username
@@ -218,13 +219,5 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
-	}
-}
-
-func (s *Server) handlerespond() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(200)
-
-		return
 	}
 }
