@@ -126,6 +126,10 @@ type getAdvertisement struct {
 	Description       string `json:"description"`
 }
 
+type DeleteAdvertisementsResult struct {
+	AdvertisementsDeleted bool   `json:"advertisementsdeleted"`
+	Message               string `json:"message"`
+}
 type Config struct {
 	ListenServePort string
 }
