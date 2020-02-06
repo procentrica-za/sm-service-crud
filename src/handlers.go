@@ -140,7 +140,6 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 
 func (s *Server) handleregisteruser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Register User Has Been Called!")
 		user := User{}
 		err := json.NewDecoder(r.Body).Decode(&user)
 
