@@ -92,7 +92,6 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(advertisement)
-		fmt.Println(js)
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
 			w.WriteHeader(500)
@@ -129,7 +128,6 @@ func (s *Server) handleupdateadvertisement() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function to update advertisement")
-			fmt.Println(err.Error())
 			fmt.Println("Error in communicating with database to update advertisement")
 			return
 		}
@@ -172,7 +170,6 @@ func (s *Server) handleremoveadvertisement() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function to delete advertisement")
-			fmt.Println(err.Error())
 			fmt.Println("Error in communicating with database to delete advertisement")
 			return
 		}

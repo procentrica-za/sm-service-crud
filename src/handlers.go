@@ -23,8 +23,8 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Error in communicating with database to login user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in scanning the return variables from sql function into specified variables.")
 			return
 		}
 		loginUserResult := LoginUserResult{}
@@ -66,8 +66,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to delete user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to delete user")
 			return
 		}
@@ -116,8 +115,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to update user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to update user")
 			return
 		}
@@ -159,8 +157,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to register user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to register user")
 			return
 		}
@@ -199,8 +196,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email)
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to get user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to get user")
 			return
 		}
@@ -212,7 +208,6 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		user.Email = email
 
 		js, jserr := json.Marshal(user)
-		fmt.Println(js)
 		if jserr != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
