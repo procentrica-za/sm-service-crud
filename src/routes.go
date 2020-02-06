@@ -1,6 +1,7 @@
 package main
 
 func (s *Server) routes() {
+	// Service User Manager Routes
 	s.router.HandleFunc("/user", s.handleregisteruser()).Methods("POST")
 	s.router.HandleFunc("/user", s.handlegetuser()).Methods("GET")
 	s.router.HandleFunc("/user", s.handleupdateuser()).Methods("PUT")

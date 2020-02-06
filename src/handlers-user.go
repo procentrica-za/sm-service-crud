@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// The function handling the request of a user trying to log in.
 func (s *Server) handleloginuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Login User Has Been Called...")
@@ -22,9 +23,8 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Error in communicating with database to login user")
-			fmt.Println(err.Error())
-			fmt.Println("Error in communicating with database to login user")
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in scanning the return variables from sql function into specified variables.")
 			return
 		}
 		loginUserResult := LoginUserResult{}
@@ -52,6 +52,7 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to delete a user.
 func (s *Server) handledeleteuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Delete User Has Been Called..")
@@ -65,8 +66,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to delete user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to delete user")
 			return
 		}
@@ -96,6 +96,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to update a users details.
 func (s *Server) handleupdateuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Update User Has Been Called...")
@@ -114,8 +115,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to update user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to update user")
 			return
 		}
@@ -138,6 +138,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to register a user.
 func (s *Server) handleregisteruser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := User{}
@@ -156,8 +157,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to register user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to register user")
 			return
 		}
@@ -182,6 +182,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to get a users details based on their userID
 func (s *Server) handlegetuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Get User Has Been Called...")
@@ -195,8 +196,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email)
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to get user")
-			fmt.Println(err.Error())
+			fmt.Fprintf(w, err.Error())
 			fmt.Println("Error in communicating with database to get user")
 			return
 		}
@@ -208,7 +208,6 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		user.Email = email
 
 		js, jserr := json.Marshal(user)
-		fmt.Println(js)
 		if jserr != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
