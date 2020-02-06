@@ -76,6 +76,7 @@ type dbConfig struct {
 	PostgresHost    string
 	PostgresPort    string
 	ListenServePort string
+}
 //advert crud
 type PostAdvertisement struct {
 	UserID            string `json:"userid"`

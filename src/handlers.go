@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// The function handling the request of a user trying to log in.
 func (s *Server) handleloginuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Login User Has Been Called...")
@@ -24,7 +25,6 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Error in communicating with database to login user")
 			fmt.Println(err.Error())
-			fmt.Println("Error in communicating with database to login user")
 			return
 		}
 		loginUserResult := LoginUserResult{}
@@ -52,6 +52,7 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to delete a user.
 func (s *Server) handledeleteuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Delete User Has Been Called..")
@@ -96,6 +97,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to update a users details.
 func (s *Server) handleupdateuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Update User Has Been Called...")
@@ -138,6 +140,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to register a user.
 func (s *Server) handleregisteruser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Register User Has Been Called!")
@@ -183,6 +186,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 	}
 }
 
+// The function handling the request to get a users details based on their userID
 func (s *Server) handlegetuser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Get User Has Been Called...")
