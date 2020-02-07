@@ -302,50 +302,58 @@ func (s *Server) handledeleteuseradvertisements() http.HandlerFunc {
 	}
 }
 
-/*func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
+func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		advertisementType := r.URL.Query().Get("adverttype")
 
-		//retrieve URL from ad service
-		getadvertisementid := r.URL.Query().Get("id")
-		advertisementid := AdvertisementID{}
-		advertisementid.AdvertisementID = getadvertisementid
-
-		//set response variables
-		var id, userid, advertisementtype, entityid, price, description string
-
-		//communcate with the database
-		querystring := "SELECT * FROM public.getadvertisement('" + advertisementid.AdvertisementID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &userid, &advertisementtype, &entityid, &price, &description)
+		rows, err := s.dbAccess.Query("SELECT * FROM getadvertisementbytype('" + advertisementType + "')")
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to get advertisement")
-			fmt.Println(err.Error())
-			fmt.Println("Error in communicating with database to get advertisement")
+			fmt.Fprintf(w, "Unable to process DB Function...")
 			return
 		}
-		//fmt.Println("This is Advertisement!: " + id)
-		advertisement := getAdvertisement{}
-		advertisement.AdvertisementID = id
-		advertisement.UserID = userid
-		advertisement.AdvertisementType = advertisementtype
-		advertisement.EntityID = entityid
-		advertisement.Price = price
-		advertisement.Description = description
+		defer rows.Close()
 
-		//convert struct back to JSON
-		js, jserr := json.Marshal(advertisement)
-		fmt.Println(js)
-		//error occured when trying to convert struct to a JSON object
+		advertList := AdvertisementList{}
+		advertList.Advertisements = []getAdvertisement{}
+
+		var advertid string
+		var userid string
+		var advertisementtype string
+		var entityid string
+		var price string
+		var description string
+
+		for rows.Next() {
+			err = rows.Scan(&advertid, &userid, &advertisementtype, &entityid, &price, &description)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				fmt.Println(err.Error())
+				return
+			}
+			advertList.Advertisements = append(advertList.Advertisements, getAdvertisement{advertid, userid, advertisementtype, entityid, price, description})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+			return
+		}
+
+		js, jserr := json.Marshal(advertList)
+
+		//If Queryrow returns error, provide error to caller and exit
 		if jserr != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON object from DB result to get advertisement")
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
 			return
 		}
 
-		//return back to advert service
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
 	}
 }
-*/

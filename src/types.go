@@ -126,6 +126,10 @@ type getAdvertisement struct {
 	Description       string `json:"description"`
 }
 
+type AdvertisementList struct {
+	Advertisements []getAdvertisement `json:"advertisements"`
+}
+
 type DeleteAdvertisementsResult struct {
 	AdvertisementsDeleted bool   `json:"advertisementsdeleted"`
 	Message               string `json:"message"`

@@ -14,7 +14,7 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/advertisement", s.handleremoveadvertisement()).Methods("DELETE")
 	s.router.HandleFunc("/advertisement", s.handlegetadvertisement()).Methods("GET")
 	s.router.HandleFunc("/advertisements", s.handledeleteuseradvertisements()).Methods("DELETE")
-	//s.router.HandleFunc("/advertisementtype", s.handlegetadvertisementbytype()).Methods("GET")
+	s.router.HandleFunc("/advertisementtype", s.handlegetadvertisementbytype()).Methods("GET")
 	//s.router.HandleFunc("/advertisements", s.handlegetadvertisements()).Methods("GET")
 
 }
