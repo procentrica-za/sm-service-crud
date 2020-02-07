@@ -442,8 +442,8 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		advertList := AdvertisementList{}
-		advertList.Advertisements = []getAdvertisement{}
+		advertList := TypeAdvertisementList{}
+		advertList.TypeAdvertisements = []getAdvertisement{}
 
 		var advertid string
 		var userid string
@@ -460,7 +460,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			advertList.Advertisements = append(advertList.Advertisements, getAdvertisement{advertid, userid, advertisementtype, entityid, price, description})
+			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisement{advertid, userid, advertisementtype, entityid, price, description})
 		}
 
 		// get any error encountered during iteration

@@ -127,8 +127,12 @@ type getAdvertisement struct {
 }
 
 
+type TypeAdvertisementList struct {
+	TypeAdvertisements []getAdvertisement `json:"typeadvertisements"`
+}
+
 type AdvertisementList struct {
-	Advertisements []getAdvertisement `json:"typeadvertisements"`
+	Advertisements []getAdvertisement `json:"advertisements"`
 }
 
 type GetUserAdvertisementResult struct {
