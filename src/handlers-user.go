@@ -18,8 +18,9 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 		userLogin.Password = getpassword
 
 		var userid, username string
+		var successLogin bool
 		querystring := "SELECT * FROM public.loginuser('" + userLogin.Username + "','" + userLogin.Password + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&userid, &username)
+		err := s.dbAccess.QueryRow(querystring).Scan(&userid, &username, &successLogin)
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -28,14 +29,16 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 			return
 		}
 		loginUserResult := LoginUserResult{}
-		if userid == "" {
-			loginUserResult.UserLoggedIn = false
+		if userid == "00000000-0000-0000-0000-000000000000" {
+			loginUserResult.UserLoggedIn = successLogin
 			loginUserResult.UserID = ""
-			loginUserResult.Message = "Wrong username or password combination!"
+			loginUserResult.Username = username
+			loginUserResult.Message = "Wrong username and password combination for user: " + username + " !"
 		} else {
-			loginUserResult.UserLoggedIn = true
+			loginUserResult.UserLoggedIn = successLogin
 			loginUserResult.UserID = userid
-			loginUserResult.Message = "Welcome! " + username
+			loginUserResult.Username = username
+			loginUserResult.Message = "Welcome! "  + username
 		}
 
 		js, jserr := json.Marshal(loginUserResult)
