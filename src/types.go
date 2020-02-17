@@ -127,14 +127,24 @@ type getAdvertisement struct {
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
 	Description       string `json:"description"`
+	Message           string `json:"message"`
+}
+
+type getAdvertisements struct {
+	AdvertisementID   string `json:"id"`
+	UserID            string `json:"userid"`
+	AdvertisementType string `json:"advertisementtype"`
+	EntityID          string `json:"entityid"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
 }
 
 type TypeAdvertisementList struct {
-	TypeAdvertisements []getAdvertisement `json:"typeadvertisements"`
+	TypeAdvertisements []getAdvertisements `json:"typeadvertisements"`
 }
 
 type AdvertisementList struct {
-	Advertisements []getAdvertisement `json:"advertisements"`
+	Advertisements []getAdvertisements `json:"advertisements"`
 }
 
 type GetUserAdvertisementResult struct {

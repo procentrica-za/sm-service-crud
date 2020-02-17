@@ -81,13 +81,26 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 			fmt.Println("Error in communicating with database to get advertisement")
 			return
 		}
+
 		advertisement := getAdvertisement{}
-		advertisement.AdvertisementID = id
-		advertisement.UserID = userid
-		advertisement.AdvertisementType = advertisementtype
-		advertisement.EntityID = entityid
-		advertisement.Price = price
-		advertisement.Description = description
+		if id == "00000000-0000-0000-0000-000000000000" {
+			advertisement.AdvertisementID = ""
+			advertisement.UserID = userid
+			advertisement.AdvertisementType = advertisementtype
+			advertisement.EntityID = entityid
+			advertisement.Price = price
+			advertisement.Description = description
+			advertisement.Message = "This advertisement does not exist"
+
+		} else {
+			advertisement.AdvertisementID = id
+			advertisement.UserID = userid
+			advertisement.AdvertisementType = advertisementtype
+			advertisement.EntityID = entityid
+			advertisement.Price = price
+			advertisement.Description = description
+			advertisement.Message = "This advertisement exists"
+		}
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(advertisement)
@@ -301,13 +314,6 @@ func (s *Server) handledeleteuseradvertisements() http.HandlerFunc {
 	}
 }
 
-
-
-
-
-
-
-
 func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userid := r.URL.Query().Get("id")
@@ -363,12 +369,6 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 	}
 }
 
-
-
-
-
-
-
 func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getalladvertisements()")
@@ -380,7 +380,7 @@ func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 		defer rows.Close()
 
 		advertList := AdvertisementList{}
-		advertList.Advertisements = []getAdvertisement{}
+		advertList.Advertisements = []getAdvertisements{}
 
 		var advertid string
 		var userid string
@@ -397,7 +397,7 @@ func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			advertList.Advertisements = append(advertList.Advertisements, getAdvertisement{advertid, userid, advertisementtype, entityid, price, description})
+			advertList.Advertisements = append(advertList.Advertisements, getAdvertisements{advertid, userid, advertisementtype, entityid, price, description})
 		}
 
 		// get any error encountered during iteration
@@ -423,12 +423,6 @@ func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 	}
 }
 
-
-
-
-
-
-
 func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		advertisementType := r.URL.Query().Get("adverttype")
@@ -442,7 +436,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 		defer rows.Close()
 
 		advertList := TypeAdvertisementList{}
-		advertList.TypeAdvertisements = []getAdvertisement{}
+		advertList.TypeAdvertisements = []getAdvertisements{}
 
 		var advertid string
 		var userid string
@@ -459,7 +453,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisement{advertid, userid, advertisementtype, entityid, price, description})
+			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisements{advertid, userid, advertisementtype, entityid, price, description})
 		}
 
 		// get any error encountered during iteration

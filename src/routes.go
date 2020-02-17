@@ -19,5 +19,3 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/advertisements", s.handlegetalladvertisements()).Methods("GET")
 
 }
-
-
