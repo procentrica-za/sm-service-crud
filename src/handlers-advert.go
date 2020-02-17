@@ -37,7 +37,7 @@ func (s *Server) handlepostadvertisement() http.HandlerFunc {
 			return
 		}
 
-		//set JSON object variables for respinse
+		//set JSON object variables for response
 		postAdvertisementResult := PostAdvertisementResult{}
 		postAdvertisementResult.AdvertisementPosted = advertisementposted
 		postAdvertisementResult.ID = id
@@ -81,7 +81,6 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 			fmt.Println("Error in communicating with database to get advertisement")
 			return
 		}
-		//fmt.Println("This is Advertisement!: " + id)
 		advertisement := getAdvertisement{}
 		advertisement.AdvertisementID = id
 		advertisement.UserID = userid
