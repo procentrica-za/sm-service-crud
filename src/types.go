@@ -33,6 +33,8 @@ type getUser struct {
 	Name     string `json:"name"`
 	Surname  string `json:"surname"`
 	Email    string `json:"email"`
+	Message  string `json:"message"`
+	GotUser  bool   `json:"gotuser"`
 }
 
 type updateUser struct {
@@ -59,7 +61,7 @@ type LoginUserResult struct {
 	UserID       string `json:"id"`
 	Username     string `json:"username"`
 	UserLoggedIn bool   `json:"userloggedin"`
-	Message string `json:"message"`
+	Message      string `json:"message"`
 }
 
 type RegisterUserResult struct {
@@ -127,7 +129,6 @@ type getAdvertisement struct {
 	Description       string `json:"description"`
 }
 
-
 type TypeAdvertisementList struct {
 	TypeAdvertisements []getAdvertisement `json:"typeadvertisements"`
 }
@@ -147,7 +148,6 @@ type GetUserAdvertisementResult struct {
 type UserAdvertisementList struct {
 	UserAdvertisements []GetUserAdvertisementResult `json:"useradvertisements"`
 }
-
 
 type DeleteAdvertisementsResult struct {
 	AdvertisementsDeleted bool   `json:"advertisementsdeleted"`

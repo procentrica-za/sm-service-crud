@@ -38,7 +38,7 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 			loginUserResult.UserLoggedIn = successLogin
 			loginUserResult.UserID = userid
 			loginUserResult.Username = username
-			loginUserResult.Message = "Welcome! "  + username
+			loginUserResult.Message = "Welcome! " + username
 		}
 
 		js, jserr := json.Marshal(loginUserResult)
@@ -194,21 +194,34 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		userid.UserID = getuserid
 
 		var id, username, name, surname, email string
+		var successget bool
 
 		querystring := "SELECT * FROM public.getuser('" + userid.UserID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email)
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email, &successget)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
-			fmt.Println("Error in communicating with database to get user")
+			fmt.Println("Error in communicating with database to get user based on ID")
 			return
 		}
 		user := getUser{}
-		user.UserID = id
-		user.Username = username
-		user.Name = name
-		user.Surname = surname
-		user.Email = email
+		if id == "00000000-0000-0000-0000-000000000000" {
+			user.UserID = ""
+			user.Username = username
+			user.Name = name
+			user.Surname = surname
+			user.Email = email
+			user.Message = "This User does not exist"
+			user.GotUser = successget
+		} else {
+			user.UserID = id
+			user.Username = username
+			user.Name = name
+			user.Surname = surname
+			user.Email = email
+			user.Message = "This user exists"
+			user.GotUser = successget
+		}
 
 		js, jserr := json.Marshal(user)
 		if jserr != nil {
