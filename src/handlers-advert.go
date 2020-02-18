@@ -485,3 +485,60 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handlegetadvertisementbyposttype() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		advertisementpostType := r.URL.Query().Get("advertposttype")
+
+		rows, err := s.dbAccess.Query("SELECT * FROM getadvertisementbyposttype('" + advertisementpostType + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		advertList := TypeAdvertisementList{}
+		advertList.TypeAdvertisements = []getAdvertisements{}
+
+		var advertid string
+		var userid string
+		var isselling bool
+		var advertisementtype string
+		var entityid string
+		var price string
+		var description string
+
+		for rows.Next() {
+			err = rows.Scan(&advertid, &userid, &isselling, &advertisementtype, &entityid, &price, &description)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				fmt.Println(err.Error())
+				return
+			}
+			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisements{advertid, userid, isselling, advertisementtype, entityid, price, description})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+			return
+		}
+
+		js, jserr := json.Marshal(advertList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
