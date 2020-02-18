@@ -23,7 +23,7 @@ func (s *Server) handlepostadvertisement() http.HandlerFunc {
 		var id, message string
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.addadvertisement('" + advertisement.UserID + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "')"
+		querystring := "SELECT * FROM public.addadvertisement('" + advertisement.UserID + "','" + advertisement.IsSelling + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "')"
 
 		//retrieve message from database tt set to JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&advertisementposted, &id, &message)
@@ -70,10 +70,10 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 
 		//set response variables
 		var id, userid, advertisementtype, entityid, price, description string
-
+		var isselling bool
 		//communcate with the database
 		querystring := "SELECT * FROM public.getadvertisement('" + advertisementid.AdvertisementID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &userid, &advertisementtype, &entityid, &price, &description)
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &userid, &isselling, &advertisementtype, &entityid, &price, &description)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function to get advertisement")
@@ -86,6 +86,7 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 		if id == "00000000-0000-0000-0000-000000000000" {
 			advertisement.AdvertisementID = ""
 			advertisement.UserID = userid
+			advertisement.IsSelling = isselling
 			advertisement.AdvertisementType = advertisementtype
 			advertisement.EntityID = entityid
 			advertisement.Price = price
@@ -95,6 +96,7 @@ func (s *Server) handlegetadvertisement() http.HandlerFunc {
 		} else {
 			advertisement.AdvertisementID = id
 			advertisement.UserID = userid
+			advertisement.IsSelling = isselling
 			advertisement.AdvertisementType = advertisementtype
 			advertisement.EntityID = entityid
 			advertisement.Price = price
@@ -134,7 +136,7 @@ func (s *Server) handleupdateadvertisement() http.HandlerFunc {
 		var msg string
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.updateadvertisement('" + advertisement.AdvertisementID + "','" + advertisement.UserID + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "')"
+		querystring := "SELECT * FROM public.updateadvertisement('" + advertisement.AdvertisementID + "','" + advertisement.UserID + "','" + advertisement.IsSelling + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "')"
 		err = s.dbAccess.QueryRow(querystring).Scan(&advertisementupdated, &msg)
 
 		if err != nil {
@@ -226,10 +228,11 @@ func (s *Server) handlegetuserdetails() http.HandlerFunc {
 
 		//set response variables
 		var id, userid, advertisementtype, entityid, price, description string
+		var isselling bool
 
 		//communcate with the database
 		querystring := "SELECT * FROM public.getadvertisement('" + advertisementid.AdvertisementID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &userid, &advertisementtype, &entityid, &price, &description)
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &userid, &isselling, &advertisementtype, &entityid, &price, &description)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function to get advertisement")
@@ -241,6 +244,7 @@ func (s *Server) handlegetuserdetails() http.HandlerFunc {
 		advertisement := getAdvertisement{}
 		advertisement.AdvertisementID = id
 		advertisement.UserID = userid
+		advertisement.IsSelling = isselling
 		advertisement.AdvertisementType = advertisementtype
 		advertisement.EntityID = entityid
 		advertisement.Price = price
@@ -330,20 +334,21 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 		userAdvertList.UserAdvertisements = []GetUserAdvertisementResult{}
 
 		var advertid string
+		var isselling bool
 		var advertisementtype string
 		var entityid string
 		var price string
 		var description string
 
 		for rows.Next() {
-			err = rows.Scan(&advertid, &advertisementtype, &entityid, &price, &description)
+			err = rows.Scan(&advertid, &isselling, &advertisementtype, &entityid, &price, &description)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from User Advertisement List...")
 				fmt.Println(err.Error())
 				return
 			}
-			userAdvertList.UserAdvertisements = append(userAdvertList.UserAdvertisements, GetUserAdvertisementResult{advertid, advertisementtype, entityid, price, description})
+			userAdvertList.UserAdvertisements = append(userAdvertList.UserAdvertisements, GetUserAdvertisementResult{advertid, isselling, advertisementtype, entityid, price, description})
 		}
 
 		// get any error encountered during iteration
@@ -384,20 +389,21 @@ func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 
 		var advertid string
 		var userid string
+		var isselling bool
 		var advertisementtype string
 		var entityid string
 		var price string
 		var description string
 
 		for rows.Next() {
-			err = rows.Scan(&advertid, &userid, &advertisementtype, &entityid, &price, &description)
+			err = rows.Scan(&advertid, &userid, &isselling, &advertisementtype, &entityid, &price, &description)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
 				fmt.Println(err.Error())
 				return
 			}
-			advertList.Advertisements = append(advertList.Advertisements, getAdvertisements{advertid, userid, advertisementtype, entityid, price, description})
+			advertList.Advertisements = append(advertList.Advertisements, getAdvertisements{advertid, userid, isselling, advertisementtype, entityid, price, description})
 		}
 
 		// get any error encountered during iteration
@@ -440,20 +446,21 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 
 		var advertid string
 		var userid string
+		var isselling bool
 		var advertisementtype string
 		var entityid string
 		var price string
 		var description string
 
 		for rows.Next() {
-			err = rows.Scan(&advertid, &userid, &advertisementtype, &entityid, &price, &description)
+			err = rows.Scan(&advertid, &userid, &isselling, &advertisementtype, &entityid, &price, &description)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
 				fmt.Println(err.Error())
 				return
 			}
-			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisements{advertid, userid, advertisementtype, entityid, price, description})
+			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisements{advertid, userid, isselling, advertisementtype, entityid, price, description})
 		}
 
 		// get any error encountered during iteration

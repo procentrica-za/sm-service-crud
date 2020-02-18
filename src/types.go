@@ -84,6 +84,7 @@ type dbConfig struct {
 //advert crud
 type PostAdvertisement struct {
 	UserID            string `json:"userid"`
+	IsSelling         string `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
@@ -99,6 +100,7 @@ type PostAdvertisementResult struct {
 type UpdateAdvertisement struct {
 	AdvertisementID   string `json:"id"`
 	UserID            string `json:"userid"`
+	IsSelling         string `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
@@ -123,6 +125,7 @@ type AdvertisementID struct {
 type getAdvertisement struct {
 	AdvertisementID   string `json:"id"`
 	UserID            string `json:"userid"`
+	IsSelling         bool   `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
@@ -133,6 +136,7 @@ type getAdvertisement struct {
 type getAdvertisements struct {
 	AdvertisementID   string `json:"id"`
 	UserID            string `json:"userid"`
+	IsSelling         bool   `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
@@ -149,6 +153,7 @@ type AdvertisementList struct {
 
 type GetUserAdvertisementResult struct {
 	AdvertisementID   string `json:"advertisementid"`
+	IsSelling         bool   `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
