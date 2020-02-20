@@ -33,6 +33,8 @@ type getUser struct {
 	Name     string `json:"name"`
 	Surname  string `json:"surname"`
 	Email    string `json:"email"`
+	Message  string `json:"message"`
+	GotUser  bool   `json:"gotuser"`
 }
 
 type updateUser struct {
@@ -59,7 +61,7 @@ type LoginUserResult struct {
 	UserID       string `json:"id"`
 	Username     string `json:"username"`
 	UserLoggedIn bool   `json:"userloggedin"`
-	Message string `json:"message"`
+	Message      string `json:"message"`
 }
 
 type RegisterUserResult struct {
@@ -82,6 +84,7 @@ type dbConfig struct {
 //advert crud
 type PostAdvertisement struct {
 	UserID            string `json:"userid"`
+	IsSelling         string `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
@@ -97,6 +100,7 @@ type PostAdvertisementResult struct {
 type UpdateAdvertisement struct {
 	AdvertisementID   string `json:"id"`
 	UserID            string `json:"userid"`
+	IsSelling         string `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
@@ -121,23 +125,35 @@ type AdvertisementID struct {
 type getAdvertisement struct {
 	AdvertisementID   string `json:"id"`
 	UserID            string `json:"userid"`
+	IsSelling         bool   `json:"isselling"`
+	AdvertisementType string `json:"advertisementtype"`
+	EntityID          string `json:"entityid"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
+	Message           string `json:"message"`
+}
+
+type getAdvertisements struct {
+	AdvertisementID   string `json:"id"`
+	UserID            string `json:"userid"`
+	IsSelling         bool   `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
 	Description       string `json:"description"`
 }
 
-
 type TypeAdvertisementList struct {
-	TypeAdvertisements []getAdvertisement `json:"typeadvertisements"`
+	TypeAdvertisements []getAdvertisements `json:"typeadvertisements"`
 }
 
 type AdvertisementList struct {
-	Advertisements []getAdvertisement `json:"advertisements"`
+	Advertisements []getAdvertisements `json:"advertisements"`
 }
 
 type GetUserAdvertisementResult struct {
 	AdvertisementID   string `json:"advertisementid"`
+	IsSelling         bool   `json:"isselling"`
 	AdvertisementType string `json:"advertisementtype"`
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`

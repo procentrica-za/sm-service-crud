@@ -51,7 +51,7 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 			loginUserResult.UserLoggedIn = successLogin
 			loginUserResult.UserID = userid
 			loginUserResult.Username = username
-			loginUserResult.Message = "Welcome! "  + username
+			loginUserResult.Message = "Welcome! " + username
 		}
 
 		// converting response struct to JSON payload to send to service that called this function.
@@ -79,7 +79,7 @@ func (s *Server) handledeleteuser() http.HandlerFunc {
 		getuserid := r.URL.Query().Get("id")
 		userid := UserID{}
 		userid.UserID = getuserid
-		
+
 		// declaring variable to catch response from database.
 		var userDeleted bool
 
@@ -185,7 +185,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 // The function handling the request to register a user.
 func (s *Server) handleregisteruser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		
+
 		// declare a user struct.
 		user := User{}
 
@@ -251,32 +251,41 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 
 		// declare variables to catch response from database.
 		var id, username, name, surname, email string
+		var successget bool
 
 		// create query string.
 		querystring := "SELECT * FROM public.getuser('" + userid.UserID + "')"
-
-		//query database and read response from database into variables.
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email)
-		
-		// check for errors with reading reponse from database into variables.
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email, &successget)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
-			fmt.Println("Error in communicating with database to get user")
+			fmt.Println("Error in communicating with database to get user based on ID")
 			return
 		}
 
 		// instansiate response struct.
 		user := getUser{}
-		user.UserID = id
-		user.Username = username
-		user.Name = name
-		user.Surname = surname
-		user.Email = email
+		if id == "00000000-0000-0000-0000-000000000000" {
+			user.UserID = ""
+			user.Username = username
+			user.Name = name
+			user.Surname = surname
+			user.Email = email
+			user.Message = "This User does not exist"
+			user.GotUser = successget
+		} else {
+			user.UserID = id
+			user.Username = username
+			user.Name = name
+			user.Surname = surname
+			user.Email = email
+			user.Message = "This user exists"
+			user.GotUser = successget
+		}
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(user)
-		
+
 		// check for errors when converting struct into JSON payload.
 		if jserr != nil {
 			w.WriteHeader(500)
