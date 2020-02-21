@@ -655,16 +655,15 @@ func (s *Server) handleupdatetextbook() http.HandlerFunc {
 
 func (s *Server) handlegettextbooksbyfilter() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//get JSON payload
+		//get filters through header
 		textbookfilter := TextbookFilter{}
-		err := json.NewDecoder(r.Body).Decode(&textbookfilter)
+		textbookfilter.ModuleCode = r.URL.Query().Get("modulecode")
+		textbookfilter.Name = r.URL.Query().Get("name")
+		textbookfilter.Edition = r.URL.Query().Get("edition")
+		textbookfilter.Quality = r.URL.Query().Get("quality")
+		textbookfilter.Author = r.URL.Query().Get("author")
+		
 
-		//handle for bad JSON provided
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to filter textbook ")
-			return
-		}
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
 		querystring := "SELECT * FROM gettextbookbyfilter('%" + textbookfilter.ModuleCode + "%', '%" + textbookfilter.Name + "%' , '%" + textbookfilter.Edition+ "%' , '%" + textbookfilter.Quality + "%' , '%" + textbookfilter.Author + "%')"
 		rows, err := s.dbAccess.Query(querystring)
@@ -876,16 +875,9 @@ func (s *Server) handleupdatenote() http.HandlerFunc {
 
 func (s *Server) handlegetnotesbyfilter() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//get JSON payload
 		notefilter := NoteFilter{}
-		err := json.NewDecoder(r.Body).Decode(&notefilter)
+		notefilter.ModuleCode = r.URL.Query().Get("modulecode")
 
-		//handle for bad JSON provided
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to filter Note ")
-			return
-		}
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
 		querystring := "SELECT * FROM getnotesbyfilter('%" + notefilter.ModuleCode + "%')"
 		rows, err := s.dbAccess.Query(querystring)
@@ -1098,16 +1090,14 @@ func (s *Server) handleupdatetutor() http.HandlerFunc {
 
 func (s *Server) handlegettutorsbyfilter() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//get JSON payload
 		tutorfilter := TutorFilter{}
-		err := json.NewDecoder(r.Body).Decode(&tutorfilter)
 
-		//handle for bad JSON provided
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to filter Tutor ")
-			return
-		}
+		tutorfilter.ModuleCode = r.URL.Query().Get("modulecode")
+		tutorfilter.Subject = r.URL.Query().Get("subject")
+		tutorfilter.YearCompleted = r.URL.Query().Get("yearcompleted")
+		tutorfilter.Venue = r.URL.Query().Get("venue")
+		tutorfilter.NotesIncluded = r.URL.Query().Get("notesincluded")
+		tutorfilter.Terms = r.URL.Query().Get("terms")
 
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
 		querystring := "SELECT * FROM gettutorbyfilter('%" + tutorfilter.ModuleCode + "%', '%" + tutorfilter.Subject + "%' , '%" + tutorfilter.YearCompleted + "%' , '%" + tutorfilter.Venue + "%' , '%" + tutorfilter.NotesIncluded + "%' , '%" + tutorfilter.Terms + "%')"
@@ -1321,16 +1311,11 @@ func (s *Server) handleupdateaccomodation() http.HandlerFunc {
 
 func (s *Server) handlegetaccomodationsbyfilter() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//get JSON payload
 		accomodationfilter := AccomodationFilter{}
-		err := json.NewDecoder(r.Body).Decode(&accomodationfilter)
-
-		//handle for bad JSON provided
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to filter accomodation ")
-			return
-		}
+		accomodationfilter.AccomodationTypeCode = r.URL.Query().Get("accomodationtypecode")
+		accomodationfilter.InstitutionName = r.URL.Query().Get("institutionname")
+		accomodationfilter.Location = r.URL.Query().Get("location")
+		accomodationfilter.DistanceToCampus = r.URL.Query().Get("distancetocampus")
 
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
 		querystring := "SELECT * FROM getaccomodationbyfilter('%" + accomodationfilter.AccomodationTypeCode + "%', '%" + accomodationfilter.InstitutionName + "%' , '%" + accomodationfilter.Location + "%' , '%" + accomodationfilter.DistanceToCampus + "%')"
