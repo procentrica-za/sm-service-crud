@@ -81,6 +81,17 @@ type dbConfig struct {
 	ListenServePort string
 }
 
+//Forgot password
+type UserEmail struct {
+	Email string `json:"email"`
+}
+
+type ForgotPasswordResult struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Message  string `json:"message"`
+}
+
 //advert crud
 type PostAdvertisement struct {
 	UserID            string `json:"userid"`

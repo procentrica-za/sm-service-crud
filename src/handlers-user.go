@@ -296,5 +296,54 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
+	} 
+}
+
+func (s *Server) handleforgotpassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle forgot password Has Been Called in the crud")
+		//retrieve ID from advert service
+		getuseremail := r.URL.Query().Get("email")
+
+		useremail := UserEmail{}
+		useremail.Email = getuseremail
+
+		var email, password, message string
+		querystring := "SELECT * FROM public.forgotpassword('" + useremail.Email + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&email, &password, &message)
+
+		//handle for bad JSON provided
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to handle forget password")
+			fmt.Println(err.Error())
+			fmt.Println("Unable to process DB Function to handle forget password")
+			return
+		}
+
+		//set response variables
+
+		forgotpasswordresult := ForgotPasswordResult{}
+		forgotpasswordresult.Email = email
+		forgotpasswordresult.Password = password
+		forgotpasswordresult.Message = message
+
+		//Send to email service
+
+		//convert struct back to JSON
+		js, jserr := json.Marshal(forgotpasswordresult)
+
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete adverts")
+			return
+		}
+
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
 	}
 }
