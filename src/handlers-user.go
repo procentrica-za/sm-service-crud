@@ -296,7 +296,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
-	} 
+	}
 }
 
 func (s *Server) handleforgotpassword() http.HandlerFunc {
@@ -327,8 +327,6 @@ func (s *Server) handleforgotpassword() http.HandlerFunc {
 		forgotpasswordresult.Email = email
 		forgotpasswordresult.Password = password
 		forgotpasswordresult.Message = message
-
-		//Send to email service
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(forgotpasswordresult)
