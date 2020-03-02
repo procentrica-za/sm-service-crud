@@ -37,5 +37,11 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/accomodation", s.handleaddaccomodation()).Methods("POST")
 	s.router.HandleFunc("/accomodation", s.handleupdateaccomodation()).Methods("PUT")
 	s.router.HandleFunc("/accomodation", s.handleremoveaccomodation()).Methods("DELETE")
-	
+
+	/*
+		======================================= File Manager =========================================
+	*/
+	s.router.HandleFunc("/cardimage", s.handlegetcardimagepath()).Methods("GET")
+	s.router.HandleFunc("/cardimagebatch", s.handlegetcardimagepathbatch()).Methods("POST")
+
 }
