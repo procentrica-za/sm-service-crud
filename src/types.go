@@ -166,49 +166,48 @@ type UserAdvertisementList struct {
 
 type Textbook struct {
 	ModuleCode string `json:"modulecode"`
-	Name string `json:"name"`
-	Edition string `json:"edition"`
-	Quality string `json:"quality"`
-	Author string `json:"author"`
+	Name       string `json:"name"`
+	Edition    string `json:"edition"`
+	Quality    string `json:"quality"`
+	Author     string `json:"author"`
 }
 
 type TextbookResult struct {
-	TextbookAdded bool `json:"textbookadded"`
-	TextbookID string `json:"id"`
-	Message string `json:"message"`
+	TextbookAdded bool   `json:"textbookadded"`
+	TextbookID    string `json:"id"`
+	Message       string `json:"message"`
 }
 
 type UpdateTextbook struct {
 	TextbookID string `json:"id"`
 	ModuleCode string `json:"modulecode"`
-	Name string `json:"name"`
-	Edition string `json:"edition"`
-	Quality string `json:"quality"`
-	Author string `json:"author"`
+	Name       string `json:"name"`
+	Edition    string `json:"edition"`
+	Quality    string `json:"quality"`
+	Author     string `json:"author"`
 }
 
 type UpdateTextbookResult struct {
-	TextbookUpdated bool `json:"textbookupdated"`
-	Message string `json:"message"`
+	TextbookUpdated bool   `json:"textbookupdated"`
+	Message         string `json:"message"`
 }
 
 type TextbookFilter struct {
 	ModuleCode string `json:"modulecode"`
-	Name string `json:"name"`
-	Edition string `json:"edition"`
-	Quality string `json:"quality"`
-	Author string `json:"author"`
+	Name       string `json:"name"`
+	Edition    string `json:"edition"`
+	Quality    string `json:"quality"`
+	Author     string `json:"author"`
 }
 
 type TextbookFilterResult struct {
 	ModuleCode string `json:"modulecode"`
-	ID string `'json:"id"`
-	Name string `json:"name"`
-	Edition string `json:"edition"`
-	Quality string `json:"quality"`
-	Author string `json:"author"`
+	ID         string `'json:"id"`
+	Name       string `json:"name"`
+	Edition    string `json:"edition"`
+	Quality    string `json:"quality"`
+	Author     string `json:"author"`
 }
-
 
 type TextbookList struct {
 	Textbooks []TextbookFilterResult `json:"textbooks"`
@@ -217,7 +216,7 @@ type TextbookList struct {
 type DeleteTextbookResult struct {
 	TextbookDeleted bool   `json:"Textbookdeleted"`
 	TextbookID      string `json:"id"`
-	Message              string `json:"message"`
+	Message         string `json:"message"`
 }
 
 type Note struct {
@@ -225,19 +224,19 @@ type Note struct {
 }
 
 type NoteResult struct {
-	NoteAdded bool `json:"noteadded"`
-	NoteID string `json:"id"`
-	Message string `json:"message"`
+	NoteAdded bool   `json:"noteadded"`
+	NoteID    string `json:"id"`
+	Message   string `json:"message"`
 }
 
 type UpdateNote struct {
-	NoteID string `json:"id"`
+	NoteID     string `json:"id"`
 	ModuleCode string `json:"modulecode"`
 }
 
 type UpdateNoteResult struct {
-	NoteUpdated bool `json:"noteupdated"`
-	Message string `json:"message"`
+	NoteUpdated bool   `json:"noteupdated"`
+	Message     string `json:"message"`
 }
 
 type NoteFilter struct {
@@ -245,7 +244,7 @@ type NoteFilter struct {
 }
 
 type NoteFilterResult struct {
-	ID string `json:"id"`
+	ID         string `json:"id"`
 	ModuleCode string `json:"modulecode"`
 }
 
@@ -256,57 +255,56 @@ type NoteList struct {
 type DeleteNoteResult struct {
 	NoteDeleted bool   `json:"Notedeleted"`
 	NoteID      string `json:"id"`
-	Message              string `json:"message"`
+	Message     string `json:"message"`
 }
 
 type Tutor struct {
-	ModuleCode string `json:"modulecode"`
-	Subject string `json:"subject"`
+	ModuleCode    string `json:"modulecode"`
+	Subject       string `json:"subject"`
 	YearCompleted string `json:"yearcompleted"`
-	Venue string `json:"venue"`
+	Venue         string `json:"venue"`
 	NotesIncluded string `json:"notesincluded"`
-	Terms string `json:"terms"`
+	Terms         string `json:"terms"`
 }
 
 type TutorResult struct {
-	TutorAdded bool `json:"tutoradded"`
-	TutorID string `json:"id"`
-	Message string `json:"message"`
+	TutorAdded bool   `json:"tutoradded"`
+	TutorID    string `json:"id"`
+	Message    string `json:"message"`
 }
 
 type UpdateTutor struct {
-	TutorID string `json:"id"`
-	ModuleCode string `json:"modulecode"`
-	Subject string `json:"subject"`
+	TutorID       string `json:"id"`
+	ModuleCode    string `json:"modulecode"`
+	Subject       string `json:"subject"`
 	YearCompleted string `json:"yearcompleted"`
-	Venue string `json:"venue"`
+	Venue         string `json:"venue"`
 	NotesIncluded string `json:"notesincluded"`
-	Terms string `json:"terms"`
+	Terms         string `json:"terms"`
 }
 
 type UpdateTutorResult struct {
-	TutorUpdated bool `json:"tutorupdated"`
-	Message string `json:"message"`
+	TutorUpdated bool   `json:"tutorupdated"`
+	Message      string `json:"message"`
 }
 
-
 type TutorFilter struct {
-	ModuleCode string `json:"modulecode"`
-	Subject string `json:"subject"`
+	ModuleCode    string `json:"modulecode"`
+	Subject       string `json:"subject"`
 	YearCompleted string `json:"yearcompleted"`
-	Venue string `json:"venue"`
+	Venue         string `json:"venue"`
 	NotesIncluded string `json:"notesincluded"`
-	Terms string `json:"terms"`
+	Terms         string `json:"terms"`
 }
 
 type TutorFilterResult struct {
-	ID string `json:"id"`
-	ModuleCode string `json:"modulecode"`
-	Subject string `json:"subject"`
+	ID            string `json:"id"`
+	ModuleCode    string `json:"modulecode"`
+	Subject       string `json:"subject"`
 	YearCompleted string `json:"yearcompleted"`
-	Venue string `json:"venue"`
+	Venue         string `json:"venue"`
 	NotesIncluded string `json:"notesincluded"`
-	Terms string `json:"terms"`
+	Terms         string `json:"terms"`
 }
 
 type TutorList struct {
@@ -316,49 +314,48 @@ type TutorList struct {
 type DeleteTutorResult struct {
 	TutorDeleted bool   `json:"Tutordeleted"`
 	TutorID      string `json:"id"`
-	Message              string `json:"message"`
+	Message      string `json:"message"`
 }
 
 type Accomodation struct {
 	AccomodationTypeCode string `json:"accomodationtypecode"`
-	InstitutionName string `json:"institutionname"`
-	Location string `json:"location"`
-	DistanceToCampus string `json:"distancetocampus"`
+	InstitutionName      string `json:"institutionname"`
+	Location             string `json:"location"`
+	DistanceToCampus     string `json:"distancetocampus"`
 }
 
 type AccomodationResult struct {
-	AccomodationAdded bool `json:"accomodationadded"`
-	AccomodationID string `json:"id"`
-	Message string `json:"message"`
+	AccomodationAdded bool   `json:"accomodationadded"`
+	AccomodationID    string `json:"id"`
+	Message           string `json:"message"`
 }
 
 type UpdateAccomodation struct {
-	AccomodationID string `json:"id"`
+	AccomodationID       string `json:"id"`
 	AccomodationTypeCode string `json:"accomodationtypecode"`
-	InstitutionName string `json:"institutionname"`
-	Location string `json:"location"`
-	DistanceToCampus string `json:"distancetocampus"`
+	InstitutionName      string `json:"institutionname"`
+	Location             string `json:"location"`
+	DistanceToCampus     string `json:"distancetocampus"`
 }
 
 type UpdateAccomodationResult struct {
-	AccomodationUpdated bool `json:"accomodationupdated"`
-	Message string `json:"message"`
+	AccomodationUpdated bool   `json:"accomodationupdated"`
+	Message             string `json:"message"`
 }
-
 
 type AccomodationFilter struct {
 	AccomodationTypeCode string `json:"accomodationtypecode"`
-	InstitutionName string `json:"institutionname"`
-	Location string `json:"location"`
-	DistanceToCampus string `json:"distancetocampus"`
+	InstitutionName      string `json:"institutionname"`
+	Location             string `json:"location"`
+	DistanceToCampus     string `json:"distancetocampus"`
 }
 
 type AccomodationFilterResult struct {
-	ID string `json:"id"`
+	ID                   string `json:"id"`
 	AccomodationTypeCode string `json:"accomodationtypecode"`
-	InstitutionName string `json:"institutionname"`
-	Location string `json:"location"`
-	DistanceToCampus string `json:"distancetocampus"`
+	InstitutionName      string `json:"institutionname"`
+	Location             string `json:"location"`
+	DistanceToCampus     string `json:"distancetocampus"`
 }
 
 type AccomodationList struct {
@@ -368,13 +365,32 @@ type AccomodationList struct {
 type DeleteAccomodationResult struct {
 	AccomodationDeleted bool   `json:"Accomodationdeleted"`
 	AccomodationID      string `json:"id"`
-	Message              string `json:"message"`
+	Message             string `json:"message"`
 }
 
 type DeleteAdvertisementsResult struct {
 	AdvertisementsDeleted bool   `json:"advertisementsdeleted"`
 	Message               string `json:"message"`
 }
+
+type CardImage struct {
+	EntityID string `json:"entityid"`
+	FilePath string `json:"filepath"`
+	FileName string `json:"filename"`
+}
+
+type CardImageBatch struct {
+	Images []CardImage `json:"images"`
+}
+
+type CardImageRequest struct {
+	EntityID string `json:"entityid"`
+}
+
+type CardImageBatchRequest struct {
+	Cards []CardImageRequest `json:"cards"`
+}
+
 type Config struct {
 	ListenServePort string
 }
