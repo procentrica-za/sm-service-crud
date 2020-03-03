@@ -164,6 +164,78 @@ type UserAdvertisementList struct {
 	UserAdvertisements []GetUserAdvertisementResult `json:"useradvertisements"`
 }
 
+type GetTextbookAdvertisementsResult struct {
+	AdvertisementID   string `json:"advertisementid"`
+	UserID            string `json:"userid"`
+	Isselling         bool   `json:"isselling"`
+	AdvertisementType string `json:"advertisementtype"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
+	TextbookID        string `json:"textbookid"`
+	TextbookName      string `json:"textbookname"`
+	Edition           string `json:"edition"`
+	Quality           string `json:"quality"`
+	Author            string `json:"author"`
+	ModuleCode        string `json:"modulecode"`
+}
+
+type TextbookAdvertisementList struct {
+	Textbooks []GetTextbookAdvertisementsResult `json:"textbooks"`
+}
+
+type GetTutorAdvertisementsResult struct {
+	Advertisementid   string `json:"advertisementid"`
+	Userid            string `json:"userid"`
+	Isselling         bool   `json:"isselling"`
+	Advertisementtype string `json:"advertisementtype"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
+	Tutorid           string `json:"tutorid"`
+	Subject           string `json:"subject"`
+	Yearcompleted     string `json:"yearcompleted"`
+	Venue             string `json:"venue"`
+	Notesincluded     string `json:"notesincluded"`
+	Terms             string `json:"terms"`
+	Modulecode        string `json:"modulecode"`
+}
+
+type TutorAdvertisementList struct {
+	Tutors []GetTutorAdvertisementsResult `json:"tutors"`
+}
+
+type GetAccomodationAdvertisementsResult struct {
+	Advertisementid      string `json:"advertisementid"`
+	Userid               string `json:"userid"`
+	Isselling            bool   `json:"isselling"`
+	Advertisementtype    string `json:"advertisementtype"`
+	Price                string `json:"price"`
+	Description          string `json:"description"`
+	AccomodationID       string `json:"accomodationid"`
+	Accomodationtypecode string `json:"accomodationtypecode"`
+	Location             string `json:"location"`
+	Distancetocampus     string `json:"distancetocampus"`
+	InsitutionName       string `json:"institutionname"`
+}
+
+type AccomodationAdvertisementList struct {
+	Accomodations []GetAccomodationAdvertisementsResult `json:"accomodations"`
+}
+
+type GetNoteAdvertisementsResult struct {
+	Advertisementid   string `json:"advertisementid"`
+	Userid            string `json:"userid"`
+	Isselling         bool   `json:"isselling"`
+	Advertisementtype string `json:"advertisementtype"`
+	Price             string `json:"price"`
+	Description       string `json:"description"`
+	NoteID            string `json:"noteid"`
+	ModuleCode        string `json:"modulecode"`
+}
+
+type NoteAdvertisementList struct {
+	Notes []GetNoteAdvertisementsResult `json:"notes"`
+}
+
 type Textbook struct {
 	ModuleCode string `json:"modulecode"`
 	Name       string `json:"name"`

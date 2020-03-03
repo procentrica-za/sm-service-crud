@@ -432,57 +432,200 @@ func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		advertisementType := r.URL.Query().Get("adverttype")
+		resultLimit := r.URL.Query().Get("limit")
 
-		rows, err := s.dbAccess.Query("SELECT * FROM getadvertisementbytype('" + advertisementType + "')")
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
-			return
+		if resultLimit == "" {
+			resultLimit = "10"
 		}
-		defer rows.Close()
+		switch {
+		case advertisementType == "TXB":
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('" + resultLimit + "')")
 
-		advertList := TypeAdvertisementList{}
-		advertList.TypeAdvertisements = []getAdvertisements{}
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
 
-		var advertid string
-		var userid string
-		var isselling bool
-		var advertisementtype string
-		var entityid string
-		var price string
-		var description string
+			textbookAdvertList := TextbookAdvertisementList{}
+			textbookAdvertList.Textbooks = []GetTextbookAdvertisementsResult{}
 
-		for rows.Next() {
-			err = rows.Scan(&advertid, &userid, &isselling, &advertisementtype, &entityid, &price, &description)
+			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode string
+			var isselling bool
+
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
-				fmt.Println(err.Error())
 				return
 			}
-			advertList.TypeAdvertisements = append(advertList.TypeAdvertisements, getAdvertisements{advertid, userid, isselling, advertisementtype, entityid, price, description})
+
+			js, jserr := json.Marshal(textbookAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		case advertisementType == "TUT":
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('" + resultLimit + "')")
+
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
+
+			tutorAdvertList := TutorAdvertisementList{}
+			tutorAdvertList.Tutors = []GetTutorAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode string
+			var isselling bool
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(tutorAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		case advertisementType == "ACD":
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('" + resultLimit + "')")
+
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
+
+			accomodationAdvertList := AccomodationAdvertisementList{}
+			accomodationAdvertList.Accomodations = []GetAccomodationAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, accomodationID, accomodationtypecode, location, distancetocampus, insitutionName string
+
+			var isselling bool
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &accomodationID, &accomodationtypecode, &location, &distancetocampus, &insitutionName)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				accomodationAdvertList.Accomodations = append(accomodationAdvertList.Accomodations, GetAccomodationAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, accomodationID, accomodationtypecode, location, distancetocampus, insitutionName})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(accomodationAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		case advertisementType == "NTS":
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('" + resultLimit + "')")
+
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
+
+			noteAdvertList := NoteAdvertisementList{}
+			noteAdvertList.Notes = []GetNoteAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, noteID, modulecode string
+			var isselling bool
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(noteAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+		default:
+			fmt.Println("Default Hit!")
 		}
-
-		// get any error encountered during iteration
-		err = rows.Err()
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
-			return
-		}
-
-		js, jserr := json.Marshal(advertList)
-
-		//If Queryrow returns error, provide error to caller and exit
-		if jserr != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON from DB result...")
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(200)
-		w.Write(js)
 	}
 }
 
@@ -544,7 +687,7 @@ func (s *Server) handlegetadvertisementbyposttype() http.HandlerFunc {
 }
 
 func (s *Server) handleaddtextbook() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		//get JSON payload
 		textbook := Textbook{}
 		err := json.NewDecoder(r.Body).Decode(&textbook)
@@ -565,7 +708,7 @@ func (s *Server) handleaddtextbook() http.HandlerFunc {
 
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&textbookAdded, &id)
-		
+
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
@@ -579,11 +722,11 @@ func (s *Server) handleaddtextbook() http.HandlerFunc {
 		postTextbookResult := TextbookResult{}
 
 		// populate response struct variables.
-		if(textbookAdded){
+		if textbookAdded {
 			postTextbookResult.TextbookAdded = textbookAdded
 			postTextbookResult.TextbookID = id
 			postTextbookResult.Message = "Textbook Successfully Added!"
-		}else{
+		} else {
 			postTextbookResult.TextbookAdded = textbookAdded
 			postTextbookResult.TextbookID = id
 			postTextbookResult.Message = "Failed to add Textbook!"
@@ -591,7 +734,7 @@ func (s *Server) handleaddtextbook() http.HandlerFunc {
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(postTextbookResult)
-		
+
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
 			w.WriteHeader(500)
@@ -607,49 +750,49 @@ func (s *Server) handleaddtextbook() http.HandlerFunc {
 }
 
 func (s *Server) handleupdatetextbook() http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request){
-	//get JSON payload
-	textbook := UpdateTextbook{}
-	err := json.NewDecoder(r.Body).Decode(&textbook)
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Bad JSON provided to update textbook")
-		return
-	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		//get JSON payload
+		textbook := UpdateTextbook{}
+		err := json.NewDecoder(r.Body).Decode(&textbook)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to update textbook")
+			return
+		}
 
-	//set response variables
-	var TextbookUpdated bool
-	var msg string
+		//set response variables
+		var TextbookUpdated bool
+		var msg string
 
-	//communcate with the database
-	querystring := "SELECT * FROM public.updatetextbook('" + textbook.TextbookID + "','" + textbook.ModuleCode + "','" + textbook.Name + "','" + textbook.Edition + "','" + textbook.Quality + "','" + textbook.Author + "')"
-	err = s.dbAccess.QueryRow(querystring).Scan(&TextbookUpdated, &msg)
+		//communcate with the database
+		querystring := "SELECT * FROM public.updatetextbook('" + textbook.TextbookID + "','" + textbook.ModuleCode + "','" + textbook.Name + "','" + textbook.Edition + "','" + textbook.Quality + "','" + textbook.Author + "')"
+		err = s.dbAccess.QueryRow(querystring).Scan(&TextbookUpdated, &msg)
 
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to process DB Function to update textbook")
-		fmt.Println("Error in communicating with database to update textbook")
-		return
-	}
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to update textbook")
+			fmt.Println("Error in communicating with database to update textbook")
+			return
+		}
 
-	updateTextbookResult := UpdateTextbookResult{}
-	updateTextbookResult.TextbookUpdated = TextbookUpdated
-	updateTextbookResult.Message = msg
+		updateTextbookResult := UpdateTextbookResult{}
+		updateTextbookResult.TextbookUpdated = TextbookUpdated
+		updateTextbookResult.Message = msg
 
-	//convert struct back to JSON
-	js, jserr := json.Marshal(updateTextbookResult)
+		//convert struct back to JSON
+		js, jserr := json.Marshal(updateTextbookResult)
 
-	//error occured when trying to convert struct to a JSON object
-	if jserr != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to create JSON object from DB result to update Textbook")
-		return
-	}
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update Textbook")
+			return
+		}
 
-	//return back to advert service
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	w.Write(js)
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
 	}
 }
 
@@ -662,10 +805,9 @@ func (s *Server) handlegettextbooksbyfilter() http.HandlerFunc {
 		textbookfilter.Edition = r.URL.Query().Get("edition")
 		textbookfilter.Quality = r.URL.Query().Get("quality")
 		textbookfilter.Author = r.URL.Query().Get("author")
-		
 
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
-		querystring := "SELECT * FROM gettextbookbyfilter('%" + textbookfilter.ModuleCode + "%', '%" + textbookfilter.Name + "%' , '%" + textbookfilter.Edition+ "%' , '%" + textbookfilter.Quality + "%' , '%" + textbookfilter.Author + "%')"
+		querystring := "SELECT * FROM gettextbookbyfilter('%" + textbookfilter.ModuleCode + "%', '%" + textbookfilter.Name + "%' , '%" + textbookfilter.Edition + "%' , '%" + textbookfilter.Quality + "%' , '%" + textbookfilter.Author + "%')"
 		rows, err := s.dbAccess.Query(querystring)
 		if err != nil {
 			w.WriteHeader(500)
@@ -764,7 +906,7 @@ func (s *Server) handleremovetextbook() http.HandlerFunc {
 }
 
 func (s *Server) handleaddnote() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		//get JSON payload
 		note := Note{}
 		err := json.NewDecoder(r.Body).Decode(&note)
@@ -785,7 +927,7 @@ func (s *Server) handleaddnote() http.HandlerFunc {
 
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&noteAdded, &id)
-		
+
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
@@ -799,11 +941,11 @@ func (s *Server) handleaddnote() http.HandlerFunc {
 		postNoteResult := NoteResult{}
 
 		// populate response struct variables.
-		if(noteAdded){
+		if noteAdded {
 			postNoteResult.NoteAdded = noteAdded
 			postNoteResult.NoteID = id
 			postNoteResult.Message = "Note Successfully Added!"
-		}else{
+		} else {
 			postNoteResult.NoteAdded = noteAdded
 			postNoteResult.NoteID = id
 			postNoteResult.Message = "Failed to add Note!"
@@ -811,7 +953,7 @@ func (s *Server) handleaddnote() http.HandlerFunc {
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(postNoteResult)
-		
+
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
 			w.WriteHeader(500)
@@ -827,49 +969,49 @@ func (s *Server) handleaddnote() http.HandlerFunc {
 }
 
 func (s *Server) handleupdatenote() http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request){
-	//get JSON payload
-	note := UpdateNote{}
-	err := json.NewDecoder(r.Body).Decode(&note)
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Bad JSON provided to update note")
-		return
-	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		//get JSON payload
+		note := UpdateNote{}
+		err := json.NewDecoder(r.Body).Decode(&note)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to update note")
+			return
+		}
 
-	//set response variables
-	var NoteUpdated bool
-	var msg string
+		//set response variables
+		var NoteUpdated bool
+		var msg string
 
-	//communcate with the database
-	querystring := "SELECT * FROM public.updatenote('" + note.NoteID + "', '" + note.ModuleCode + "')"
-	err = s.dbAccess.QueryRow(querystring).Scan(&NoteUpdated, &msg)
+		//communcate with the database
+		querystring := "SELECT * FROM public.updatenote('" + note.NoteID + "', '" + note.ModuleCode + "')"
+		err = s.dbAccess.QueryRow(querystring).Scan(&NoteUpdated, &msg)
 
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to process DB Function to update note")
-		fmt.Println("Error in communicating with database to update note")
-		return
-	}
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to update note")
+			fmt.Println("Error in communicating with database to update note")
+			return
+		}
 
-	updateNoteResult := UpdateNoteResult{}
-	updateNoteResult.NoteUpdated = NoteUpdated
-	updateNoteResult.Message = msg
+		updateNoteResult := UpdateNoteResult{}
+		updateNoteResult.NoteUpdated = NoteUpdated
+		updateNoteResult.Message = msg
 
-	//convert struct back to JSON
-	js, jserr := json.Marshal(updateNoteResult)
+		//convert struct back to JSON
+		js, jserr := json.Marshal(updateNoteResult)
 
-	//error occured when trying to convert struct to a JSON object
-	if jserr != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to create JSON object from DB result to update Note")
-		return
-	}
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update Note")
+			return
+		}
 
-	//return back to advert service
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	w.Write(js)
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
 	}
 }
 
@@ -977,9 +1119,8 @@ func (s *Server) handleremovenote() http.HandlerFunc {
 	}
 }
 
-
 func (s *Server) handleaddtutor() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		//get JSON payload
 		tutor := Tutor{}
 		err := json.NewDecoder(r.Body).Decode(&tutor)
@@ -997,10 +1138,10 @@ func (s *Server) handleaddtutor() http.HandlerFunc {
 
 		// write querystring
 		querystring := "SELECT * FROM public.addtutor('" + tutor.ModuleCode + "','" + tutor.Subject + "','" + tutor.YearCompleted + "','" + tutor.Venue + "','" + tutor.NotesIncluded + "', '" + tutor.Terms + "')"
-	
+
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&tutorAdded, &id)
-		
+
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
@@ -1014,11 +1155,11 @@ func (s *Server) handleaddtutor() http.HandlerFunc {
 		postTutorResult := TutorResult{}
 
 		// populate response struct variables.
-		if(tutorAdded){
+		if tutorAdded {
 			postTutorResult.TutorAdded = tutorAdded
 			postTutorResult.TutorID = id
 			postTutorResult.Message = "Tutor Successfully Added!"
-		}else{
+		} else {
 			postTutorResult.TutorAdded = tutorAdded
 			postTutorResult.TutorID = id
 			postTutorResult.Message = "Failed to add Tutor!"
@@ -1026,7 +1167,7 @@ func (s *Server) handleaddtutor() http.HandlerFunc {
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(postTutorResult)
-		
+
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
 			w.WriteHeader(500)
@@ -1042,49 +1183,49 @@ func (s *Server) handleaddtutor() http.HandlerFunc {
 }
 
 func (s *Server) handleupdatetutor() http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request){
-	//get JSON payload
-	tutor := UpdateTutor{}
-	err := json.NewDecoder(r.Body).Decode(&tutor)
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Bad JSON provided to update tutor")
-		return
-	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		//get JSON payload
+		tutor := UpdateTutor{}
+		err := json.NewDecoder(r.Body).Decode(&tutor)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to update tutor")
+			return
+		}
 
-	//set response variables
-	var TutorUpdated bool
-	var msg string
+		//set response variables
+		var TutorUpdated bool
+		var msg string
 
-	//communcate with the database
-	querystring := "SELECT * FROM public.updatetutor('" + tutor.TutorID + "', '" + tutor.ModuleCode + "', '" + tutor.Subject + "', '" + tutor.YearCompleted + "', '" + tutor.Venue + "', '" + tutor.NotesIncluded + "', '" + tutor.Terms + "')"
-	err = s.dbAccess.QueryRow(querystring).Scan(&TutorUpdated, &msg)
+		//communcate with the database
+		querystring := "SELECT * FROM public.updatetutor('" + tutor.TutorID + "', '" + tutor.ModuleCode + "', '" + tutor.Subject + "', '" + tutor.YearCompleted + "', '" + tutor.Venue + "', '" + tutor.NotesIncluded + "', '" + tutor.Terms + "')"
+		err = s.dbAccess.QueryRow(querystring).Scan(&TutorUpdated, &msg)
 
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to process DB Function to update tutor")
-		fmt.Println("Error in communicating with database to update tutor")
-		return
-	}
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to update tutor")
+			fmt.Println("Error in communicating with database to update tutor")
+			return
+		}
 
-	updateTutorResult := UpdateTutorResult{}
-	updateTutorResult.TutorUpdated = TutorUpdated
-	updateTutorResult.Message = msg
+		updateTutorResult := UpdateTutorResult{}
+		updateTutorResult.TutorUpdated = TutorUpdated
+		updateTutorResult.Message = msg
 
-	//convert struct back to JSON
-	js, jserr := json.Marshal(updateTutorResult)
+		//convert struct back to JSON
+		js, jserr := json.Marshal(updateTutorResult)
 
-	//error occured when trying to convert struct to a JSON object
-	if jserr != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to create JSON object from DB result to update Tutor")
-		return
-	}
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update Tutor")
+			return
+		}
 
-	//return back to advert service
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	w.Write(js)
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
 	}
 }
 
@@ -1113,7 +1254,7 @@ func (s *Server) handlegettutorsbyfilter() http.HandlerFunc {
 		tutorList := TutorList{}
 		tutorList.Tutors = []TutorFilterResult{}
 
-		var modulecode, id, subject, yearcompleted, venue, notesincluded, terms  string
+		var modulecode, id, subject, yearcompleted, venue, notesincluded, terms string
 
 		//read the returned Tutor into Tutor struct this repeats for each Tutor found.
 		for rows.Next() {
@@ -1198,9 +1339,8 @@ func (s *Server) handleremovetutor() http.HandlerFunc {
 	}
 }
 
-
 func (s *Server) handleaddaccomodation() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		//get JSON payload
 		accomodation := Accomodation{}
 		err := json.NewDecoder(r.Body).Decode(&accomodation)
@@ -1221,7 +1361,7 @@ func (s *Server) handleaddaccomodation() http.HandlerFunc {
 
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&accomodationAdded, &id)
-		
+
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
@@ -1235,11 +1375,11 @@ func (s *Server) handleaddaccomodation() http.HandlerFunc {
 		postAccomodationResult := AccomodationResult{}
 
 		// populate response struct variables.
-		if(accomodationAdded){
+		if accomodationAdded {
 			postAccomodationResult.AccomodationAdded = accomodationAdded
 			postAccomodationResult.AccomodationID = id
 			postAccomodationResult.Message = "Accomodation Successfully Added!"
-		}else{
+		} else {
 			postAccomodationResult.AccomodationAdded = accomodationAdded
 			postAccomodationResult.AccomodationID = id
 			postAccomodationResult.Message = "Failed to add Accomodation!"
@@ -1247,7 +1387,7 @@ func (s *Server) handleaddaccomodation() http.HandlerFunc {
 
 		//convert struct back to JSON
 		js, jserr := json.Marshal(postAccomodationResult)
-		
+
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
 			w.WriteHeader(500)
@@ -1263,51 +1403,50 @@ func (s *Server) handleaddaccomodation() http.HandlerFunc {
 }
 
 func (s *Server) handleupdateaccomodation() http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request){
-	//get JSON payload
-	accomodation := UpdateAccomodation{}
-	err := json.NewDecoder(r.Body).Decode(&accomodation)
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Bad JSON provided to update accomodation")
-		return
-	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		//get JSON payload
+		accomodation := UpdateAccomodation{}
+		err := json.NewDecoder(r.Body).Decode(&accomodation)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to update accomodation")
+			return
+		}
 
-	//set response variables
-	var AccomodationUpdated bool
-	var msg string
+		//set response variables
+		var AccomodationUpdated bool
+		var msg string
 
-	//communcate with the database
-	querystring := "SELECT * FROM public.updateaccomodation('" + accomodation.AccomodationID + "', '" + accomodation.AccomodationTypeCode + "', '" + accomodation.InstitutionName + "', '" + accomodation.Location + "', '" + accomodation.DistanceToCampus + "')"
-	err = s.dbAccess.QueryRow(querystring).Scan(&AccomodationUpdated, &msg)
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to process DB Function to update accomodation")
-		fmt.Println("Error in communicating with database to update accomodation")
-		return
-	}
+		//communcate with the database
+		querystring := "SELECT * FROM public.updateaccomodation('" + accomodation.AccomodationID + "', '" + accomodation.AccomodationTypeCode + "', '" + accomodation.InstitutionName + "', '" + accomodation.Location + "', '" + accomodation.DistanceToCampus + "')"
+		err = s.dbAccess.QueryRow(querystring).Scan(&AccomodationUpdated, &msg)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to update accomodation")
+			fmt.Println("Error in communicating with database to update accomodation")
+			return
+		}
 
-	updateAccomodationResult := UpdateAccomodationResult{}
-	updateAccomodationResult.AccomodationUpdated = AccomodationUpdated
-	updateAccomodationResult.Message = msg
+		updateAccomodationResult := UpdateAccomodationResult{}
+		updateAccomodationResult.AccomodationUpdated = AccomodationUpdated
+		updateAccomodationResult.Message = msg
 
-	//convert struct back to JSON
-	js, jserr := json.Marshal(updateAccomodationResult)
+		//convert struct back to JSON
+		js, jserr := json.Marshal(updateAccomodationResult)
 
-	//error occured when trying to convert struct to a JSON object
-	if jserr != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Unable to create JSON object from DB result to update Accomodation")
-		return
-	}
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update Accomodation")
+			return
+		}
 
-	//return back to advert service
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	w.Write(js)
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
 	}
 }
-
 
 func (s *Server) handlegetaccomodationsbyfilter() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -1368,7 +1507,6 @@ func (s *Server) handlegetaccomodationsbyfilter() http.HandlerFunc {
 		w.Write(js)
 	}
 }
-
 
 func (s *Server) handleremoveaccomodation() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
