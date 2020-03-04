@@ -433,13 +433,17 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		advertisementType := r.URL.Query().Get("adverttype")
 		resultLimit := r.URL.Query().Get("limit")
+		isSelling := r.URL.Query().Get("selling")
 
 		if resultLimit == "" {
 			resultLimit = "10"
 		}
+		if isSelling == "" {
+			isSelling = "true"
+		}
 		switch {
 		case advertisementType == "TXB":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('" + resultLimit + "', '" + isSelling + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -486,7 +490,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "TUT":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('" + resultLimit + "', '" + isSelling + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -532,7 +536,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "ACD":
-			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('" + resultLimit + "', '" + isSelling + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -579,7 +583,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "NTS":
-			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('" + resultLimit + "', ' " + isSelling + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
