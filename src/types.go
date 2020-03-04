@@ -45,6 +45,16 @@ type updateUser struct {
 	Email    string `json:"email"`
 }
 
+type UpdatePassword struct {
+	UserID   string `json:"id"`
+	Password string `json:"password"`
+}
+
+type UpdatePasswordResult struct {
+	PasswordUpdated bool   `json:"passwordupdated"`
+	Message         string `json:"message"`
+}
+
 type UpdateUserResult struct {
 	UserUpdated bool   `json:"userupdated"`
 	Message     string `json:"message"`
