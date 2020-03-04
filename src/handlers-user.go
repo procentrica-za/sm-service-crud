@@ -132,27 +132,21 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 		fmt.Println("Handle Update User Has Been Called...")
 		// declare a updateUser struct.
 		user := updateUser{}
-
 		// convert received JSON payload into the declared struct.
 		err := json.NewDecoder(r.Body).Decode(&user)
-
 		//check for errors when converting JSON payload into struct.
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Bad JSON provided to update user")
 			return
 		}
-
 		// declare variables to catch response from database.
 		var userUpdated bool
 		var msg string
-
 		// building query string.
-		querystring := "SELECT * FROM public.updateuser('" + user.UserID + "','" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
-
+		querystring := "SELECT * FROM public.updateuser('" + user.UserID + "','" + user.Username + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
 		// query the database and read results into variables.
 		err = s.dbAccess.QueryRow(querystring).Scan(&userUpdated, &msg)
-
 		// check for errors with reading database result into variables.
 		if err != nil {
 			w.WriteHeader(500)
@@ -160,22 +154,18 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 			fmt.Println("Error in communicating with database to update user")
 			return
 		}
-
 		// instansiate result struct.
 		updateUserResult := UpdateUserResult{}
 		updateUserResult.UserUpdated = userUpdated
 		updateUserResult.Message = msg
-
 		// convert struct into JSON payload to send to service that called this fuction.
 		js, jserr := json.Marshal(updateUserResult)
-
 		// check for errors in converting struct to JSON.
 		if jserr != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to update user")
 			return
 		}
-
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
