@@ -8,6 +8,7 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/user", s.handledeleteuser()).Methods("DELETE")
 	s.router.HandleFunc("/userlogin", s.handleloginuser()).Methods("GET")
 	s.router.HandleFunc("/forgotpassword", s.handleforgotpassword()).Methods("GET")
+	s.router.HandleFunc("/userpassword", s.handleupdatepassword()).Methods("PUT")
 
 	//Adhandler routes
 	s.router.HandleFunc("/advertisement", s.handlepostadvertisement()).Methods("POST")

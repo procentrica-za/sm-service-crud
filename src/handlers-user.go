@@ -335,3 +335,48 @@ func (s *Server) handleforgotpassword() http.HandlerFunc {
 
 	}
 }
+
+func (s *Server) handleupdatepassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Update Password Has Been Called...")
+		// declare a updateUser struct.
+		password := UpdatePassword{}
+		// convert received JSON payload into the declared struct.
+		err := json.NewDecoder(r.Body).Decode(&password)
+		//check for errors when converting JSON payload into struct.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to update password")
+			return
+		}
+		// declare variables to catch response from database.
+		var passwordUpdated bool
+		var msg string
+		// building query string.
+		querystring := "SELECT * FROM public.updatepassword('" + password.UserID + "','" + password.Password + "')"
+		// query the database and read results into variables.
+		err = s.dbAccess.QueryRow(querystring).Scan(&passwordUpdated, &msg)
+		// check for errors with reading database result into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to update the password")
+			return
+		}
+		// instansiate result struct.
+		updatePasswordResult := UpdatePasswordResult{}
+		updatePasswordResult.PasswordUpdated = passwordUpdated
+		updatePasswordResult.Message = msg
+		// convert struct into JSON payload to send to service that called this fuction.
+		js, jserr := json.Marshal(updatePasswordResult)
+		// check for errors in converting struct to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to update password")
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
