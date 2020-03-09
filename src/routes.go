@@ -47,7 +47,7 @@ func (s *Server) routes() {
 	*/
 	s.router.HandleFunc("/cardimage", s.handlegetcardimagepath()).Methods("GET")
 	s.router.HandleFunc("/cardimagebatch", s.handlegetcardimagepathbatch()).Methods("POST")
-
+	s.router.HandleFunc("/advertisementimages", s.handlegetadvertisementimages()).Methods("GET")
 	/*
 		======================================= Messaging =========================================
 	*/
