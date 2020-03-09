@@ -8,10 +8,11 @@ import (
 
 func (s *Server) handleaddchat() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("handleaddchat Has Been Called!")
 		//get JSON payload
 		chat := StartChat{}
 		err := json.NewDecoder(r.Body).Decode(&chat)
-
+		fmt.Println("Handle add chat Has Been Called..")
 		//handle for bad JSON provided
 		if err != nil {
 			w.WriteHeader(500)
@@ -70,7 +71,7 @@ func (s *Server) handledeletechat() http.HandlerFunc {
 		fmt.Println("Handle Delete Chat Has Been Called..")
 
 		// retrieving the ID of the user that is requested to be deleted.
-		getchatid := r.URL.Query().Get("id")
+		getchatid := r.URL.Query().Get("chatid")
 		chatid := ChatID{}
 		chatid.ChatID = getchatid
 
@@ -121,9 +122,10 @@ func (s *Server) handledeletechat() http.HandlerFunc {
 
 func (s *Server) handlegetactivechats() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		chatid := r.URL.Query().Get("id")
+		fmt.Println("Handle get active chats Has Been Called..")
+		userid := r.URL.Query().Get("userid")
 
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getactivechats('" + chatid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getactivechats('" + userid + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function to get active chats")
@@ -173,12 +175,12 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 
 func (s *Server) handlegetmessages() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		fmt.Println("Handle  get messages Has Been Called..")
 		//retrieve URL from ad service
-		chatid := r.URL.Query().Get("id")
+		chatid := r.URL.Query().Get("chatid")
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM getchat('" + chatid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getchat('" + chatid + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
@@ -241,7 +243,7 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 		}
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM getchat('" + messagecontent.ChatID + "','" + messagecontent.AuthorID + "','" + messagecontent.Message + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.sendmessage('" + messagecontent.ChatID + "','" + messagecontent.AuthorID + "','" + messagecontent.Message + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
