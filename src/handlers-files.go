@@ -145,3 +145,70 @@ func (s *Server) handlegetcardimagepathbatch() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handlegetadvertisementimages() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle get Advertisement Images has beel called...")
+
+		advertisementid := r.URL.Query().Get("advertisementid")
+
+		//communcate with the database
+		querystring := "SELECT * FROM public.getadvertisementimages('" + advertisementid + "');"
+
+		//retrieve rows from db
+		rows, err := s.dbAccess.Query(querystring)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		cardBatchResult := CardImageBatch{}
+		cardBatchResult.Images = []CardImage{}
+
+		var entityid string
+		var filepath string
+		var filename string
+		//read each row that has been returned and populate the batch object
+		for rows.Next() {
+			err = rows.Scan(&entityid, &filepath, &filename)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Image Batch List")
+				return
+			}
+			cardBatchResult.Images = append(cardBatchResult.Images, CardImage{entityid, filepath, filename})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Student List...")
+			return
+		}
+
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to add advertisement")
+			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to add advertisement")
+			return
+		}
+
+		js, jserr := json.Marshal(cardBatchResult)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
