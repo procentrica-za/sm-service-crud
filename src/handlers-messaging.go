@@ -145,7 +145,7 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 			err = rows.Scan(&id, &username, &message, &messagedate)
 
 			if message == "" {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, "please select to send message", "."})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, "Please select to send a message.", ""})
 			} else {
 				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, message, messagedate})
 			}
