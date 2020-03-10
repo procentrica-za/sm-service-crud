@@ -138,16 +138,18 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 
 		var id string
 		var username string
+		var message string
+		var messagedate string
 
 		for rows.Next() {
-			err = rows.Scan(&id, &username)
-			if err != nil {
-				w.WriteHeader(500)
-				fmt.Fprintf(w, "Unable to read data from Active Chats List...")
-				fmt.Println(err.Error())
-				return
+			err = rows.Scan(&id, &username, &message, &messagedate)
+
+			if message == "" {
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, "please select to send message", "."})
+			} else {
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, message, messagedate})
 			}
-			activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username})
+
 		}
 
 		// get any error encountered during iteration
