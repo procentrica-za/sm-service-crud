@@ -321,56 +321,206 @@ func (s *Server) handledeleteuseradvertisements() http.HandlerFunc {
 func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userid := r.URL.Query().Get("id")
+		advertisementType := r.URL.Query().Get("adverttype")
+		resultLimit := r.URL.Query().Get("limit")
+		isSelling := r.URL.Query().Get("selling")
 
-		rows, err := s.dbAccess.Query("SELECT * FROM getadvertisementbyuserid('" + userid + "')")
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
-			return
+		if resultLimit == "" {
+			resultLimit = "10"
 		}
-		defer rows.Close()
+		if isSelling == "" {
+			isSelling = "true"
+		}
 
-		userAdvertList := UserAdvertisementList{}
-		userAdvertList.UserAdvertisements = []GetUserAdvertisementResult{}
+		switch {
+		case advertisementType == "TXB":
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisementsbyuserid('" + userid + "', '" + resultLimit + "', '" + isSelling + "')")
 
-		var advertid string
-		var isselling bool
-		var advertisementtype string
-		var entityid string
-		var price string
-		var description string
-
-		for rows.Next() {
-			err = rows.Scan(&advertid, &isselling, &advertisementtype, &entityid, &price, &description)
 			if err != nil {
 				w.WriteHeader(500)
-				fmt.Fprintf(w, "Unable to read data from User Advertisement List...")
-				fmt.Println(err.Error())
+				fmt.Fprintf(w, "Unable to process DB Function...")
 				return
 			}
-			userAdvertList.UserAdvertisements = append(userAdvertList.UserAdvertisements, GetUserAdvertisementResult{advertid, isselling, advertisementtype, entityid, price, description})
+			defer rows.Close()
+
+			textbookAdvertList := TextbookAdvertisementList{}
+			textbookAdvertList.Textbooks = []GetTextbookAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode string
+			var isselling bool
+
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(textbookAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		case advertisementType == "TUT":
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisementsbyuserid('" + userid + "', '" + resultLimit + "', '" + isSelling + "')")
+
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
+
+			tutorAdvertList := TutorAdvertisementList{}
+			tutorAdvertList.Tutors = []GetTutorAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode string
+			var isselling bool
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(tutorAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		case advertisementType == "ACD":
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisementsbyuserid('" + userid + "', '" + resultLimit + "', '" + isSelling + "')")
+
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
+
+			accomodationAdvertList := AccomodationAdvertisementList{}
+			accomodationAdvertList.Accomodations = []GetAccomodationAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, accomodationID, accomodationtypecode, location, distancetocampus, insitutionName string
+
+			var isselling bool
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &accomodationID, &accomodationtypecode, &location, &distancetocampus, &insitutionName)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				accomodationAdvertList.Accomodations = append(accomodationAdvertList.Accomodations, GetAccomodationAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, accomodationID, accomodationtypecode, location, distancetocampus, insitutionName})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(accomodationAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		case advertisementType == "NTS":
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisementsbyuserid('" + userid + "', '" + resultLimit + "', ' " + isSelling + "')")
+
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function...")
+				return
+			}
+			defer rows.Close()
+
+			noteAdvertList := NoteAdvertisementList{}
+			noteAdvertList.Notes = []GetNoteAdvertisementsResult{}
+
+			var advertisementID, userID, advertisementType, price, description, noteID, modulecode string
+			var isselling bool
+			for rows.Next() {
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+					fmt.Println(err.Error())
+					return
+				}
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode})
+			}
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+				return
+			}
+
+			js, jserr := json.Marshal(noteAdvertList)
+
+			//If Queryrow returns error, provide error to caller and exit
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON from DB result...")
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+		default:
+			fmt.Println("Default Hit!")
 		}
-
-		// get any error encountered during iteration
-		err = rows.Err()
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
-			return
-		}
-
-		js, jserr := json.Marshal(userAdvertList)
-
-		//If Queryrow returns error, provide error to caller and exit
-		if jserr != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON from DB result...")
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(200)
-		w.Write(js)
 	}
 }
 
