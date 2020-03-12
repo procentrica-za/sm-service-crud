@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) handleaddchat() http.HandlerFunc {
@@ -147,7 +148,10 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 			if message == "" {
 				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, "Please select to send a message.", ""})
 			} else {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, message, messagedate})
+				r := strings.NewReplacer("T", " ", "Z", "")
+				newmessagedate := r.Replace(messagedate)
+				newmessagedate = newmessagedate[:len(newmessagedate)-10]
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, message, newmessagedate})
 			}
 
 		}
@@ -206,7 +210,10 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, messagedate})
+			r := strings.NewReplacer("T", " ", "Z", "")
+			newmessagedate := r.Replace(messagedate)
+			newmessagedate = newmessagedate[:len(newmessagedate)-10]
+			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate})
 		}
 
 		// get any error encountered during iteration
@@ -269,7 +276,10 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, messagedate})
+			r := strings.NewReplacer("T", " ", "Z", "")
+			newmessagedate := r.Replace(messagedate)
+			newmessagedate = newmessagedate[:len(newmessagedate)-10]
+			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate})
 		}
 
 		// get any error encountered during iteration
