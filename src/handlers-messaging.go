@@ -25,7 +25,7 @@ func (s *Server) handleaddchat() http.HandlerFunc {
 		var id string
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.addchat('" + chat.SellerID + "','" + chat.BuyerID + "')"
+		querystring := "SELECT * FROM public.addchat('" + chat.SellerID + "','" + chat.BuyerID + "','" + chat.AdvertisementID + "')"
 
 		//retrieve message from database tt set to JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&chatposted, &id)

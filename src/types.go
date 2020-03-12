@@ -485,8 +485,9 @@ type CardImageBatchRequest struct {
 
 //Messaging types
 type StartChat struct {
-	SellerID string `json:"sellerid"`
-	BuyerID  string `json:"buyerid"`
+	SellerID        string `json:"sellerid"`
+	BuyerID         string `json:"buyerid"`
+	AdvertisementID string `json:"advertisementid"`
 }
 
 type StartChatResult struct {
