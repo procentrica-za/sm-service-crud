@@ -536,6 +536,21 @@ type SendMessage struct {
 	Message  string `json:"message"`
 }
 
+//rate types
+type StartRating struct {
+	AdvertisementID string `json:"advertisementid"`
+	SellerID        string `json:"sellerid"`
+	BuyerID         string `json:"buyerid"`
+	BuyerRating     string `json:"buyerating"`
+	BuyerComments   string `json:"buyercomments"`
+}
+
+type StartRatingResult struct {
+	BuyerRated      bool   `json:"buyerrated"`
+	AdvertisementID string `json:"advertisementid"`
+	Message         string `json:"message"`
+}
+
 type Config struct {
 	ListenServePort string
 }
