@@ -507,11 +507,12 @@ type DeleteChatResult struct {
 }
 
 type GetActiveChatResult struct {
-	ChatID          string `json:"chatid"`
-	UserName        string `json:"username"`
-	Message         string `json:"message"`
-	MessageDate     string `json:"messagedate"`
-	AdvertisementID string `json:"advertisementid"`
+	ChatID            string `json:"chatid"`
+	AdvertisementType string `json:"advertisementtype"`
+	AdvertisementID   string `json:"advertisementid"`
+	UserName          string `json:"username"`
+	Message           string `json:"message"`
+	MessageDate       string `json:"messagedate"`
 }
 
 type ActiveChatList struct {
