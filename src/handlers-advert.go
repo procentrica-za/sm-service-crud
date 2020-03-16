@@ -927,7 +927,7 @@ func (s *Server) handleaddnote() http.HandlerFunc {
 		var id string
 
 		// write querystring
-		querystring := "SELECT * FROM public.addnote('" + note.ModuleCode + "')"
+		querystring := "SELECT * FROM public.addnote('" + note.ID + "', '" + note.ModuleCode + "')"
 
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&noteAdded, &id)
@@ -1141,7 +1141,7 @@ func (s *Server) handleaddtutor() http.HandlerFunc {
 		var id string
 
 		// write querystring
-		querystring := "SELECT * FROM public.addtutor('" + tutor.ModuleCode + "','" + tutor.Subject + "','" + tutor.YearCompleted + "','" + tutor.Venue + "','" + tutor.NotesIncluded + "', '" + tutor.Terms + "')"
+		querystring := "SELECT * FROM public.addtutor('" + tutor.ID + "', '" + tutor.ModuleCode + "','" + tutor.Subject + "','" + tutor.YearCompleted + "','" + tutor.Venue + "','" + tutor.NotesIncluded + "', '" + tutor.Terms + "')"
 
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&tutorAdded, &id)
@@ -1361,7 +1361,7 @@ func (s *Server) handleaddaccomodation() http.HandlerFunc {
 		var id string
 
 		// write querystring
-		querystring := "SELECT * FROM public.addaccomodation('" + accomodation.AccomodationTypeCode + "','" + accomodation.InstitutionName + "','" + accomodation.Location + "','" + accomodation.DistanceToCampus + "')"
+		querystring := "SELECT * FROM public.addaccomodation('" + accomodation.ID + "', '" + accomodation.AccomodationTypeCode + "','" + accomodation.InstitutionName + "','" + accomodation.Location + "','" + accomodation.DistanceToCampus + "')"
 
 		// query the database.
 		err = s.dbAccess.QueryRow(querystring).Scan(&accomodationAdded, &id)
