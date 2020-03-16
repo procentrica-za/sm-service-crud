@@ -485,9 +485,10 @@ type CardImageBatchRequest struct {
 
 //Messaging types
 type StartChat struct {
-	SellerID        string `json:"sellerid"`
-	BuyerID         string `json:"buyerid"`
-	AdvertisementID string `json:"advertisementid"`
+	SellerID          string `json:"sellerid"`
+	BuyerID           string `json:"buyerid"`
+	AdvertisementType string `json:"advertisementtype"`
+	AdvertisementID   string `json:"advertisementid"`
 }
 
 type StartChatResult struct {
@@ -506,10 +507,11 @@ type DeleteChatResult struct {
 }
 
 type GetActiveChatResult struct {
-	ChatID      string `json:"chatid"`
-	UserName    string `json:"username"`
-	Message     string `json:"message"`
-	MessageDate string `json:"messagedate"`
+	ChatID          string `json:"chatid"`
+	UserName        string `json:"username"`
+	Message         string `json:"message"`
+	MessageDate     string `json:"messagedate"`
+	AdvertisementID string `json:"advertisementid"`
 }
 
 type ActiveChatList struct {
