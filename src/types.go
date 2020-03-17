@@ -552,9 +552,9 @@ type StartRatingResult struct {
 }
 
 type RateSeller struct {
-	AdvertisementID string `json:"advertisementid"`
-	SellerRating    string `json:"sellerrating"`
-	SellerComments  string `json:"sellercomments"`
+	RatingID       string `json:"ratingid"`
+	SellerRating   string `json:"sellerrating"`
+	SellerComments string `json:"sellercomments"`
 }
 
 type RateSellerResult struct {

@@ -82,7 +82,7 @@ func (s *Server) handlerateseller() http.HandlerFunc {
 		// declare variables to catch response from database.
 		var sellerRated bool
 		// building query string.
-		querystring := "SELECT * FROM public.rateseller('" + sellerrrating.AdvertisementID + "','" + sellerrrating.SellerRating + "','" + sellerrrating.SellerComments + "')"
+		querystring := "SELECT * FROM public.rateseller('" + sellerrrating.RatingID + "','" + sellerrrating.SellerRating + "','" + sellerrrating.SellerComments + "')"
 		// query the database and read results into variables.
 		err = s.dbAccess.QueryRow(querystring).Scan(&sellerRated)
 		// check for errors with reading database result into variables.
