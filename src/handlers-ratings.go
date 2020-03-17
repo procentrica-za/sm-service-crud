@@ -21,13 +21,13 @@ func (s *Server) handleratebuyer() http.HandlerFunc {
 		}
 		//set response variables
 		var buyerrated bool
-		var advertisementid string
+		var ratingid string
 
 		//communcate with the database
 		querystring := "SELECT * FROM public.ratebuyer('" + rating.AdvertisementID + "','" + rating.SellerID + "','" + rating.BuyerID + "','" + rating.BuyerRating + "','" + rating.BuyerComments + "')"
 
 		//retrieve message from database tt set to JSON object
-		err = s.dbAccess.QueryRow(querystring).Scan(&buyerrated, &advertisementid)
+		err = s.dbAccess.QueryRow(querystring).Scan(&buyerrated, &ratingid)
 
 		//check for response error of 500
 		if err != nil {
@@ -41,12 +41,12 @@ func (s *Server) handleratebuyer() http.HandlerFunc {
 		//set JSON object variables for response
 		startratingResult := StartRatingResult{}
 		startratingResult.BuyerRated = buyerrated
-		startratingResult.AdvertisementID = advertisementid
+		startratingResult.RatingID = ratingid
 
 		if buyerrated {
 			startratingResult.Message = "Buyer sucessfully rated!"
 		} else {
-			startratingResult.Message = "Buyer has not been rated!"
+			startratingResult.Message = "Buyer has already been rated!"
 		}
 
 		//convert struct back to JSON

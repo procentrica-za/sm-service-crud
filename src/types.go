@@ -546,9 +546,9 @@ type StartRating struct {
 }
 
 type StartRatingResult struct {
-	BuyerRated      bool   `json:"buyerrated"`
-	AdvertisementID string `json:"advertisementid"`
-	Message         string `json:"message"`
+	BuyerRated bool   `json:"buyerrated"`
+	RatingID   string `json:"ratingid"`
+	Message    string `json:"message"`
 }
 
 type RateSeller struct {
