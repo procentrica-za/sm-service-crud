@@ -65,3 +65,53 @@ func (s *Server) handleratebuyer() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handlerateseller() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Rate seller Has Been Called...")
+		// declare a updateUser struct.
+		sellerrrating := RateSeller{}
+		// convert received JSON payload into the declared struct.
+		err := json.NewDecoder(r.Body).Decode(&sellerrrating)
+		//check for errors when converting JSON payload into struct.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to rate seller")
+			return
+		}
+		// declare variables to catch response from database.
+		var sellerRated bool
+		var msg string
+		// building query string.
+		querystring := "SELECT * FROM public.rateseller('" + sellerrrating.AdvertisementID + "','" + sellerrrating.SellerRating + "','" + sellerrrating.SellerComments + "')"
+		// query the database and read results into variables.
+		err = s.dbAccess.QueryRow(querystring).Scan(&sellerRated, &msg)
+		// check for errors with reading database result into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to rate seller")
+			return
+		}
+		// instansiate result struct.
+		rateSellerResult := RateSellerResult{}
+		rateSellerResult.SellerRated = sellerRated
+
+		if sellerRated {
+			rateSellerResult.Message = "Seller sucessfully rated!"
+		} else {
+			rateSellerResult.Message = "Seller has not been rated!"
+		}
+		// convert struct into JSON payload to send to service that called this fuction.
+		js, jserr := json.Marshal(rateSellerResult)
+		// check for errors in converting struct to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to rate seller")
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
