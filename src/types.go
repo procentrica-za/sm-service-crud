@@ -561,6 +561,19 @@ type RateSellerResult struct {
 	SellerRated bool   `json:"sellerrated"`
 	Message     string `json:"message"`
 }
+
+type GetOutstandingResult struct {
+	RatingID    string `json:"ratingid"`
+	UserName    string `json:"username"`
+	Price       string `json:"price"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+type OutstandingRatingList struct {
+	Oustandingratings []GetOutstandingResult `json:"outstandingratings"`
+}
+
 type Config struct {
 	ListenServePort string
 }

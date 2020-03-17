@@ -81,11 +81,10 @@ func (s *Server) handlerateseller() http.HandlerFunc {
 		}
 		// declare variables to catch response from database.
 		var sellerRated bool
-		var msg string
 		// building query string.
 		querystring := "SELECT * FROM public.rateseller('" + sellerrrating.AdvertisementID + "','" + sellerrrating.SellerRating + "','" + sellerrrating.SellerComments + "')"
 		// query the database and read results into variables.
-		err = s.dbAccess.QueryRow(querystring).Scan(&sellerRated, &msg)
+		err = s.dbAccess.QueryRow(querystring).Scan(&sellerRated)
 		// check for errors with reading database result into variables.
 		if err != nil {
 			w.WriteHeader(500)
@@ -110,6 +109,62 @@ func (s *Server) handlerateseller() http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to rate seller")
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handlegetoutstandingratings() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getoustanndingratings Has Been Called..")
+		userid := r.URL.Query().Get("userid")
+
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getoutstandingratings('" + userid + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to get oustanding ratings")
+			return
+		}
+		defer rows.Close()
+
+		outstandingRatingList := OutstandingRatingList{}
+		outstandingRatingList.Oustandingratings = []GetOutstandingResult{}
+
+		var id string
+		var username string
+		var price string
+		var title string
+		var description string
+
+		for rows.Next() {
+			err = rows.Scan(&id, &username, &price, &title, &description)
+
+			if title == "" {
+				outstandingRatingList.Oustandingratings = append(outstandingRatingList.Oustandingratings, GetOutstandingResult{id, username, price, "Advertisement", description})
+			} else {
+				outstandingRatingList.Oustandingratings = append(outstandingRatingList.Oustandingratings, GetOutstandingResult{id, username, price, title, description})
+			}
+
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Outstanding ratings list...")
+			return
+		}
+
+		js, jserr := json.Marshal(outstandingRatingList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
