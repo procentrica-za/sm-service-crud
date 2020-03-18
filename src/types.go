@@ -488,8 +488,10 @@ type CardImageBatchRequest struct {
 
 //Messaging types
 type StartChat struct {
-	SellerID string `json:"sellerid"`
-	BuyerID  string `json:"buyerid"`
+	SellerID          string `json:"sellerid"`
+	BuyerID           string `json:"buyerid"`
+	AdvertisementType string `json:"advertisementtype"`
+	AdvertisementID   string `json:"advertisementid"`
 }
 
 type StartChatResult struct {
@@ -508,10 +510,12 @@ type DeleteChatResult struct {
 }
 
 type GetActiveChatResult struct {
-	ChatID      string `json:"chatid"`
-	UserName    string `json:"username"`
-	Message     string `json:"message"`
-	MessageDate string `json:"messagedate"`
+	ChatID            string `json:"chatid"`
+	AdvertisementType string `json:"advertisementtype"`
+	AdvertisementID   string `json:"advertisementid"`
+	UserName          string `json:"username"`
+	Message           string `json:"message"`
+	MessageDate       string `json:"messagedate"`
 }
 
 type ActiveChatList struct {
@@ -545,6 +549,44 @@ type UploadImage struct {
 type UploadImageResult struct {
 	ImageInserted bool   `json:"imageinserted"`
 	Message       string `json:"message"`
+}
+
+//rate types
+type StartRating struct {
+	AdvertisementID string `json:"advertisementid"`
+	SellerID        string `json:"sellerid"`
+	BuyerID         string `json:"buyerid"`
+	BuyerRating     string `json:"buyerrating"`
+	BuyerComments   string `json:"buyercomments"`
+}
+
+type StartRatingResult struct {
+	BuyerRated bool   `json:"buyerrated"`
+	RatingID   string `json:"ratingid"`
+	Message    string `json:"message"`
+}
+
+type RateSeller struct {
+	RatingID       string `json:"ratingid"`
+	SellerRating   string `json:"sellerrating"`
+	SellerComments string `json:"sellercomments"`
+}
+
+type RateSellerResult struct {
+	SellerRated bool   `json:"sellerrated"`
+	Message     string `json:"message"`
+}
+
+type GetOutstandingResult struct {
+	RatingID    string `json:"ratingid"`
+	UserName    string `json:"username"`
+	Price       string `json:"price"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+type OutstandingRatingList struct {
+	Oustandingratings []GetOutstandingResult `json:"outstandingratings"`
 }
 
 type Config struct {

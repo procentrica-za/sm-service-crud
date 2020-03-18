@@ -59,4 +59,13 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/chats", s.handlegetactivechats()).Methods("GET")
 	s.router.HandleFunc("/message", s.handlegetmessages()).Methods("GET")
 	s.router.HandleFunc("/message", s.handleaddmessage()).Methods("POST")
+
+	/*
+		======================================= Rating =========================================
+	*/
+
+	s.router.HandleFunc("/rate", s.handleratebuyer()).Methods("POST")
+	s.router.HandleFunc("/rate", s.handlerateseller()).Methods("PUT")
+	s.router.HandleFunc("/rate", s.handlegetoutstandingratings()).Methods("GET")
+
 }

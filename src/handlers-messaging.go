@@ -25,7 +25,7 @@ func (s *Server) handleaddchat() http.HandlerFunc {
 		var id string
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.addchat('" + chat.SellerID + "','" + chat.BuyerID + "')"
+		querystring := "SELECT * FROM public.addchat('" + chat.SellerID + "','" + chat.BuyerID + "','" + chat.AdvertisementType + "','" + chat.AdvertisementID + "')"
 
 		//retrieve message from database tt set to JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&chatposted, &id)
@@ -141,17 +141,19 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 		var username string
 		var message string
 		var messagedate string
+		var advertisementtype string
+		var advertisementid string
 
 		for rows.Next() {
-			err = rows.Scan(&id, &username, &message, &messagedate)
+			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &message, &messagedate)
 
 			if message == "" {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, "Please select to send a message.", ""})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, "Please select chat to send a message.", ""})
 			} else {
 				r := strings.NewReplacer("T", " ", "Z", "")
 				newmessagedate := r.Replace(messagedate)
 				newmessagedate = newmessagedate[:len(newmessagedate)-10]
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, username, message, newmessagedate})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, message, newmessagedate})
 			}
 
 		}
