@@ -535,6 +535,18 @@ type SendMessage struct {
 	Message  string `json:"message"`
 }
 
+type UploadImage struct {
+	EntityID    string `json:"entityid"`
+	FilePath    string `json:"filepath"`
+	FileName    string `json:"filename"`
+	IsMainImage bool   `json:"ismainimage"`
+}
+
+type UploadImageResult struct {
+	ImageInserted bool   `json:"imageinserted"`
+	Message       string `json:"message"`
+}
+
 type Config struct {
 	ListenServePort string
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -210,5 +211,64 @@ func (s *Server) handlegetadvertisementimages() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
+	}
+}
+
+func (s *Server) handlepostimage() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Post image has been called...")
+
+		//get JSON payload
+		image := UploadImage{}
+		err := json.NewDecoder(r.Body).Decode(&image)
+
+		//handle for bad JSON provided
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to upload image via CRUD")
+			return
+		}
+
+		//communcate with the database
+		querystring := "SELECT * FROM public.addimage('" + image.FilePath + "','" + strconv.FormatBool(image.IsMainImage) + "','" + image.FileName + "','" + image.EntityID + ")"
+
+		var imageinserted bool
+		var message string
+
+		//retrieve message from database to set to JSON object
+		err = s.dbAccess.QueryRow(querystring).Scan(&imageinserted, &message)
+
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function insert new image")
+			fmt.Println(err.Error())
+			fmt.Println("Error in communicating with database to insert new image")
+			return
+		}
+
+		//set JSON object variables for response
+		imageResult := UploadImageResult{}
+		imageResult.ImageInserted = imageinserted
+		imageResult.Message = message
+
+		js, jserr := json.Marshal(imageResult)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handlepostimagebatch() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
 	}
 }
