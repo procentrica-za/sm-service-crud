@@ -589,6 +589,17 @@ type OutstandingRatingList struct {
 	Oustandingratings []GetOutstandingResult `json:"outstandingratings"`
 }
 
+type GetPreviousResult struct {
+	RatingID string `json:"ratingid"`
+	UserName string `json:"username"`
+	Rating   string `json:"rating"`
+	Comment  string `json:"comment"`
+}
+
+type PreviousRatingList struct {
+	Previousratings []GetPreviousResult `json:"previousratings"`
+}
+
 type Config struct {
 	ListenServePort string
 }

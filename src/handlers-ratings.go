@@ -170,3 +170,105 @@ func (s *Server) handlegetoutstandingratings() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handlegetsellerratings() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getsellerratings Has Been Called..")
+		userid := r.URL.Query().Get("userid")
+
+		rows, err := s.dbAccess.Query("SELECT * FROM public.sellerratings('" + userid + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to get oustanding ratings")
+			return
+		}
+		defer rows.Close()
+
+		previousRatingList := PreviousRatingList{}
+		previousRatingList.Previousratings = []GetPreviousResult{}
+
+		var id string
+		var username string
+		var rating string
+		var comment string
+
+		for rows.Next() {
+			err = rows.Scan(&id, &username, &rating, &comment)
+
+			previousRatingList.Previousratings = append(previousRatingList.Previousratings, GetPreviousResult{id, username, rating, comment})
+
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Previous ratings list...")
+			return
+		}
+
+		js, jserr := json.Marshal(previousRatingList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handlegetbuyerratings() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getsellerratings Has Been Called..")
+		userid := r.URL.Query().Get("userid")
+
+		rows, err := s.dbAccess.Query("SELECT * FROM public.buyerratings('" + userid + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to get oustanding ratings")
+			return
+		}
+		defer rows.Close()
+
+		previousRatingList := PreviousRatingList{}
+		previousRatingList.Previousratings = []GetPreviousResult{}
+
+		var id string
+		var username string
+		var rating string
+		var comment string
+
+		for rows.Next() {
+			err = rows.Scan(&id, &username, &rating, &comment)
+
+			previousRatingList.Previousratings = append(previousRatingList.Previousratings, GetPreviousResult{id, username, rating, comment})
+
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Previous ratings list...")
+			return
+		}
+
+		js, jserr := json.Marshal(previousRatingList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
