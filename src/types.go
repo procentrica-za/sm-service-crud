@@ -600,6 +600,21 @@ type PreviousRatingList struct {
 	Previousratings []GetPreviousResult `json:"previousratings"`
 }
 
+type InterestedBuyers struct {
+	UserID          string `json:"userid"`
+	AdvertisementID string `json:"advertisementid"`
+}
+
+type GetInterestedResult struct {
+	UserName        string `json:"username"`
+	AdvertisementID string `json:"advertisementid"`
+	SellerID        string `json:"sellerid"`
+	BuyerID         string `json:"buyerid"`
+}
+
+type InterestedRatingList struct {
+	Interestedratings []GetInterestedResult `json:"interestedbuyers"`
+}
 type Config struct {
 	ListenServePort string
 }
