@@ -230,7 +230,7 @@ func (s *Server) handlepostimage() http.HandlerFunc {
 		}
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.addimage('" + image.FilePath + "','" + strconv.FormatBool(image.IsMainImage) + "','" + image.FileName + "','" + image.EntityID + ")"
+		querystring := "SELECT * FROM public.addimage('" + image.FilePath + "','" + strconv.FormatBool(image.IsMainImage) + "','" + image.FileName + "','" + image.EntityID + "')"
 
 		var imageinserted bool
 		var message string
