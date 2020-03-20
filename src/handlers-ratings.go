@@ -295,7 +295,7 @@ func (s *Server) handlegetinterestedbuyers() http.HandlerFunc {
 		defer rows.Close()
 
 		interestedRatingList := InterestedRatingList{}
-		interestedRatingList.Interestedratings = []GetInterestedResult{}
+		interestedRatingList.Interestedbuyers = []GetInterestedBuyersResult{}
 
 		var username string
 		var advertisementid string
@@ -310,7 +310,7 @@ func (s *Server) handlegetinterestedbuyers() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			interestedRatingList.Interestedratings = append(interestedRatingList.Interestedratings, GetInterestedResult{username, advertisementid, sellerid, buyerid})
+			interestedRatingList.Interestedbuyers = append(interestedRatingList.Interestedbuyers, GetInterestedBuyersResult{username, advertisementid, sellerid, buyerid})
 		}
 
 		// get any error encountered during iteration
