@@ -516,6 +516,9 @@ type GetActiveChatResult struct {
 	UserName          string `json:"username"`
 	Message           string `json:"message"`
 	MessageDate       string `json:"messagedate"`
+	Price             string `json:"price"`
+	Title             string `json:"title"`
+	Description       string `json:"description"`
 }
 
 type ActiveChatList struct {
