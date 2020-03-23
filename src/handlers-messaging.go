@@ -148,15 +148,15 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 		var description string
 
 		for rows.Next() {
-			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &message, &messagedate, &price, &title, &description)
+			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate)
 
-			if messagedate == "" {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, "Please select chat to send a message.", "", price, title, description})
+			if messagedate == "" && message == "" {
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", ""})
 			} else {
 				r := strings.NewReplacer("T", " ", "Z", "")
 				newmessagedate := r.Replace(messagedate)
 				newmessagedate = newmessagedate[:len(newmessagedate)-10]
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, message, newmessagedate, price, title, description})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate})
 			}
 
 		}

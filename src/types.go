@@ -514,11 +514,11 @@ type GetActiveChatResult struct {
 	AdvertisementType string `json:"advertisementtype"`
 	AdvertisementID   string `json:"advertisementid"`
 	UserName          string `json:"username"`
-	Message           string `json:"message"`
-	MessageDate       string `json:"messagedate"`
 	Price             string `json:"price"`
 	Title             string `json:"title"`
 	Description       string `json:"description"`
+	Message           string `json:"message"`
+	MessageDate       string `json:"messagedate"`
 }
 
 type ActiveChatList struct {
