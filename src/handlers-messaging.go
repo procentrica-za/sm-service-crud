@@ -148,8 +148,17 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 		var description string
 
 		for rows.Next() {
-			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate)
+			id = ""
+			username = ""
+			message = ""
+			messagedate = ""
+			advertisementtype = ""
+			advertisementid = ""
+			price = ""
+			title = ""
+			description = ""
 
+			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate)
 			if messagedate == "" && message == "" {
 				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", ""})
 			} else {
@@ -158,7 +167,6 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 				newmessagedate = newmessagedate[:len(newmessagedate)-10]
 				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate})
 			}
-
 		}
 
 		// get any error encountered during iteration
