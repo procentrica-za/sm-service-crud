@@ -299,18 +299,19 @@ func (s *Server) handlegetinterestedbuyers() http.HandlerFunc {
 
 		var username string
 		var advertisementid string
+		var advertisementtype string
 		var sellerid string
 		var buyerid string
 
 		for rows.Next() {
-			err = rows.Scan(&username, &advertisementid, &sellerid, &buyerid)
+			err = rows.Scan(&username, &advertisementid, &advertisementtype, &sellerid, &buyerid)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Interestedratings List...")
 				fmt.Println(err.Error())
 				return
 			}
-			interestedRatingList.Interestedbuyers = append(interestedRatingList.Interestedbuyers, GetInterestedBuyersResult{username, advertisementid, sellerid, buyerid})
+			interestedRatingList.Interestedbuyers = append(interestedRatingList.Interestedbuyers, GetInterestedBuyersResult{username, advertisementid, advertisementtype, sellerid, buyerid})
 		}
 
 		// get any error encountered during iteration
