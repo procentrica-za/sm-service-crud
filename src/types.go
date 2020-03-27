@@ -520,6 +520,7 @@ type GetActiveChatResult struct {
 	Message           string `json:"message"`
 	MessageDate       string `json:"messagedate"`
 	IsRead            string `json:"isread"`
+	MessageAuthor     string `json:"messageauthor"`
 }
 
 type ActiveChatList struct {
@@ -531,6 +532,7 @@ type GetMessageResult struct {
 	UserName    string `json:"username"`
 	Message     string `json:"message"`
 	MessageDate string `json:"messagedate"`
+	IsRead      string `json:"isread"`
 }
 
 type MessageList struct {

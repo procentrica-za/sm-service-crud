@@ -147,6 +147,7 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 		var title string
 		var description string
 		var isread string
+		var messageauthor string
 
 		for rows.Next() {
 			id = ""
@@ -159,15 +160,16 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 			title = ""
 			description = ""
 			isread = ""
+			messageauthor = ""
 
-			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate, &isread)
+			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate, &isread, &messageauthor)
 			if messagedate == "" && message == "" {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", "", ""})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", "", "", ""})
 			} else {
 				r := strings.NewReplacer("T", " ", "Z", "")
 				newmessagedate := r.Replace(messagedate)
 				newmessagedate = newmessagedate[:len(newmessagedate)-10]
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate, isread})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate, isread, messageauthor})
 			}
 		}
 
@@ -217,9 +219,10 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 		var username string
 		var message string
 		var messagedate string
+		var isread string
 
 		for rows.Next() {
-			err = rows.Scan(&messageid, &username, &message, &messagedate)
+			err = rows.Scan(&messageid, &username, &message, &messagedate, &isread)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Messages List...")
@@ -229,7 +232,7 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 			r := strings.NewReplacer("T", " ", "Z", "")
 			newmessagedate := r.Replace(messagedate)
 			newmessagedate = newmessagedate[:len(newmessagedate)-10]
-			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate})
+			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate, isread})
 		}
 
 		// get any error encountered during iteration
@@ -283,9 +286,10 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 		var username string
 		var message string
 		var messagedate string
+		var isread string
 
 		for rows.Next() {
-			err = rows.Scan(&messageid, &username, &message, &messagedate)
+			err = rows.Scan(&messageid, &username, &message, &messagedate, &isread)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Messages List...")
@@ -295,7 +299,7 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 			r := strings.NewReplacer("T", " ", "Z", "")
 			newmessagedate := r.Replace(messagedate)
 			newmessagedate = newmessagedate[:len(newmessagedate)-10]
-			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate})
+			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate, isread})
 		}
 
 		// get any error encountered during iteration
