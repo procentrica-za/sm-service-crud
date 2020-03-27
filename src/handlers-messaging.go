@@ -146,6 +146,7 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 		var price string
 		var title string
 		var description string
+		var isread string
 
 		for rows.Next() {
 			id = ""
@@ -157,15 +158,16 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 			price = ""
 			title = ""
 			description = ""
+			isread = ""
 
-			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate)
+			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate, &isread)
 			if messagedate == "" && message == "" {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", ""})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", "", ""})
 			} else {
 				r := strings.NewReplacer("T", " ", "Z", "")
 				newmessagedate := r.Replace(messagedate)
 				newmessagedate = newmessagedate[:len(newmessagedate)-10]
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate, isread})
 			}
 		}
 
@@ -196,10 +198,11 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle  get messages Has Been Called..")
 		//retrieve URL from ad service
+		userid := r.URL.Query().Get("userid")
 		chatid := r.URL.Query().Get("chatid")
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getchat('" + chatid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getchat('" + userid + "','" + chatid + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
