@@ -219,10 +219,9 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 		var username string
 		var message string
 		var messagedate string
-		var isread string
 
 		for rows.Next() {
-			err = rows.Scan(&messageid, &username, &message, &messagedate, &isread)
+			err = rows.Scan(&messageid, &username, &message, &messagedate)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Messages List...")
@@ -232,7 +231,7 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 			r := strings.NewReplacer("T", " ", "Z", "")
 			newmessagedate := r.Replace(messagedate)
 			newmessagedate = newmessagedate[:len(newmessagedate)-10]
-			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate, isread})
+			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate})
 		}
 
 		// get any error encountered during iteration
@@ -286,10 +285,9 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 		var username string
 		var message string
 		var messagedate string
-		var isread string
 
 		for rows.Next() {
-			err = rows.Scan(&messageid, &username, &message, &messagedate, &isread)
+			err = rows.Scan(&messageid, &username, &message, &messagedate)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Messages List...")
@@ -299,7 +297,7 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 			r := strings.NewReplacer("T", " ", "Z", "")
 			newmessagedate := r.Replace(messagedate)
 			newmessagedate = newmessagedate[:len(newmessagedate)-10]
-			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate, isread})
+			messagesList.Messages = append(messagesList.Messages, GetMessageResult{messageid, username, message, newmessagedate})
 		}
 
 		// get any error encountered during iteration
