@@ -544,6 +544,10 @@ type SendMessage struct {
 	Message  string `json:"message"`
 }
 
+type UnreadResult struct {
+	UnreadMessages bool `json:"unreadmessages"`
+}
+
 type UploadImage struct {
 	EntityID    string `json:"entityid"`
 	FilePath    string `json:"filepath"`
