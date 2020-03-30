@@ -146,6 +146,8 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 		var price string
 		var title string
 		var description string
+		var isread string
+		var messageauthor string
 
 		for rows.Next() {
 			id = ""
@@ -157,15 +159,17 @@ func (s *Server) handlegetactivechats() http.HandlerFunc {
 			price = ""
 			title = ""
 			description = ""
+			isread = ""
+			messageauthor = ""
 
-			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate)
+			err = rows.Scan(&id, &advertisementtype, &advertisementid, &username, &price, &title, &description, &message, &messagedate, &isread, &messageauthor)
 			if messagedate == "" && message == "" {
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", ""})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, "Please select chat to send a message.", "", "", ""})
 			} else {
 				r := strings.NewReplacer("T", " ", "Z", "")
 				newmessagedate := r.Replace(messagedate)
 				newmessagedate = newmessagedate[:len(newmessagedate)-10]
-				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate})
+				activeChatList.ActiveChats = append(activeChatList.ActiveChats, GetActiveChatResult{id, advertisementtype, advertisementid, username, price, title, description, message, newmessagedate, isread, messageauthor})
 			}
 		}
 
@@ -196,10 +200,11 @@ func (s *Server) handlegetmessages() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle  get messages Has Been Called..")
 		//retrieve URL from ad service
+		userid := r.URL.Query().Get("userid")
 		chatid := r.URL.Query().Get("chatid")
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getchat('" + chatid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getchat('" + userid + "','" + chatid + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
@@ -315,5 +320,50 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
+	}
+}
+
+func (s *Server) handlegetunreadmessages() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Delete Chat Has Been Called..")
+
+		// retrieving the ID of the user that is requested to be deleted.
+		userid := r.URL.Query().Get("userid")
+
+		// declaring variable to catch response from database.
+		var unreadMessages bool
+
+		// building query string.
+		querystring := "SELECT * FROM public.unreadmessages('" + userid + "')"
+
+		// querying the database and reading response from database into variable.
+		err := s.dbAccess.QueryRow(querystring).Scan(&unreadMessages)
+
+		// check for errors with reading response from database into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to the selected chat")
+			return
+		}
+
+		// declaring result struct for delete user.
+		unreadResult := UnreadResult{}
+		unreadResult.UnreadMessages = unreadMessages
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(unreadResult)
+
+		// check to see if any errors occured with coverting to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
 	}
 }
