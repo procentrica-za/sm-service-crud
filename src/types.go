@@ -200,6 +200,7 @@ type GetTextbookAdvertisementsResult struct {
 }
 
 type TextbookAdvertisementList struct {
+	listEmpty bool                              `json:"listempty"`
 	Textbooks []GetTextbookAdvertisementsResult `json:"textbooks"`
 }
 
@@ -220,7 +221,8 @@ type GetTutorAdvertisementsResult struct {
 }
 
 type TutorAdvertisementList struct {
-	Tutors []GetTutorAdvertisementsResult `json:"tutors"`
+	listEmpty bool                           `json:"listempty"`
+	Tutors    []GetTutorAdvertisementsResult `json:"tutors"`
 }
 
 type GetAccomodationAdvertisementsResult struct {
@@ -238,6 +240,7 @@ type GetAccomodationAdvertisementsResult struct {
 }
 
 type AccomodationAdvertisementList struct {
+	listEmpty     bool                                  `json:"listempty"`
 	Accomodations []GetAccomodationAdvertisementsResult `json:"accomodations"`
 }
 
@@ -253,7 +256,8 @@ type GetNoteAdvertisementsResult struct {
 }
 
 type NoteAdvertisementList struct {
-	Notes []GetNoteAdvertisementsResult `json:"notes"`
+	listEmpty bool                          `json:"listempty"`
+	Notes     []GetNoteAdvertisementsResult `json:"notes"`
 }
 
 type Textbook struct {
@@ -624,6 +628,14 @@ type GetInterestedBuyersResult struct {
 
 type InterestedRatingList struct {
 	Interestedbuyers []GetInterestedBuyersResult `json:"interestedbuyers"`
+}
+
+type ModuleCode struct {
+	Modulecode string `json:"code"`
+}
+
+type ModuleCodeList struct {
+	Modulecodes []ModuleCode `json:"modulecodes"`
 }
 type Config struct {
 	ListenServePort string

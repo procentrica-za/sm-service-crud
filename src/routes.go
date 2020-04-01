@@ -42,6 +42,8 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/accomodation", s.handleupdateaccomodation()).Methods("PUT")
 	s.router.HandleFunc("/accomodation", s.handleremoveaccomodation()).Methods("DELETE")
 
+	s.router.HandleFunc("/modulecode", s.handlegetmodulecodes()).Methods("GET")
+
 	/*
 		======================================= File Manager =========================================
 	*/
