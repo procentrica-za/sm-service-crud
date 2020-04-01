@@ -72,15 +72,13 @@ func (s *Server) handledeletechat() http.HandlerFunc {
 		fmt.Println("Handle Delete Chat Has Been Called..")
 
 		// retrieving the ID of the user that is requested to be deleted.
-		getchatid := r.URL.Query().Get("chatid")
-		chatid := ChatID{}
-		chatid.ChatID = getchatid
+		chatid := r.URL.Query().Get("id")
 
 		// declaring variable to catch response from database.
 		var chatDeleted bool
 
 		// building query string.
-		querystring := "SELECT * FROM public.deletechat('" + chatid.ChatID + "')"
+		querystring := "SELECT * FROM public.deletechat('" + chatid + "')"
 
 		// querying the database and reading response from database into variable.
 		err := s.dbAccess.QueryRow(querystring).Scan(&chatDeleted)
