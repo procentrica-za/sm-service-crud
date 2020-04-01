@@ -318,6 +318,52 @@ func (s *Server) handledeleteuseradvertisements() http.HandlerFunc {
 	}
 }
 
+func (s *Server) handlegetmodulecodes() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Get Module Codes Has Been Called...")
+		querystring := "SELECT * FROM public.getmodulecodes()"
+
+		rows, err := s.dbAccess.Query(querystring)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+
+		moduleCodeList := ModuleCodeList{}
+		var moduleCode string
+
+		for rows.Next() {
+			err = rows.Scan(&moduleCode)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Module Code List...")
+				fmt.Println(err.Error())
+				return
+			}
+			moduleCodeList.Modulecodes = append(moduleCodeList.Modulecodes, ModuleCode{moduleCode})
+		}
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Module Code List...")
+			return
+		}
+		js, jserr := json.Marshal(moduleCodeList)
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
 func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userid := r.URL.Query().Get("id")
@@ -581,19 +627,26 @@ func (s *Server) handlegetalladvertisements() http.HandlerFunc {
 
 func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var listEmpty bool
 		advertisementType := r.URL.Query().Get("adverttype")
 		resultLimit := r.URL.Query().Get("limit")
 		isSelling := r.URL.Query().Get("selling")
-
+		priceFilter := r.URL.Query().Get("price")
 		if resultLimit == "" {
 			resultLimit = "10"
 		}
 		if isSelling == "" {
 			isSelling = "true"
 		}
+		listEmpty = true
 		switch {
 		case advertisementType == "TXB":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('" + resultLimit + "', '" + isSelling + "')")
+			ModuleCodeFilter := r.URL.Query().Get("modulecode")
+			NameFilter := r.URL.Query().Get("name")
+			EditionFilter := r.URL.Query().Get("edition")
+			QualityFilter := r.URL.Query().Get("quality")
+			AuthorFilter := r.URL.Query().Get("author")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + ModuleCodeFilter + "%', '%" + NameFilter + "%' , '%" + EditionFilter + "%' , '%" + QualityFilter + "%' , '%" + AuthorFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -607,7 +660,6 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 
 			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode string
 			var isselling bool
-
 			for rows.Next() {
 				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode)
 				if err != nil {
@@ -618,6 +670,14 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 				}
 				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode})
 			}
+			if advertisementID == "" {
+				listEmpty = true
+				textbookAdvertList.listEmpty = true
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", ""})
+			} else {
+				textbookAdvertList.listEmpty = false
+			}
+
 			// get any error encountered during iteration
 			err = rows.Err()
 			if err != nil {
@@ -640,7 +700,13 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "TUT":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('" + resultLimit + "', '" + isSelling + "')")
+			SubjectFilter := r.URL.Query().Get("subject")
+			ModuleCodeFilter := r.URL.Query().Get("modulecode")
+			YearcompletedFilter := r.URL.Query().Get("yearcompleted")
+			VenueFilter := r.URL.Query().Get("venue")
+			NotesincludedFilter := r.URL.Query().Get("notes")
+			TermsFilter := r.URL.Query().Get("terms")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + SubjectFilter + "%', '%" + YearcompletedFilter + "%' , '%" + VenueFilter + "%' , '%" + NotesincludedFilter + "%' , '%" + TermsFilter + "%' , '%" + ModuleCodeFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -654,7 +720,9 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 
 			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode string
 			var isselling bool
+
 			for rows.Next() {
+				listEmpty = false
 				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode)
 				if err != nil {
 					w.WriteHeader(500)
@@ -662,8 +730,14 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 					fmt.Println(err.Error())
 					return
 				}
+				tutorAdvertList.listEmpty = false
 				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode})
 			}
+			if listEmpty {
+				tutorAdvertList.listEmpty = true
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", ""})
+			}
+
 			// get any error encountered during iteration
 			err = rows.Err()
 			if err != nil {
@@ -686,7 +760,11 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "ACD":
-			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('" + resultLimit + "', '" + isSelling + "')")
+			AccomodationtypecodeFilter := r.URL.Query().Get("acdType")
+			LocationFilter := r.URL.Query().Get("location")
+			DistancetocampusFilter := r.URL.Query().Get("distance")
+			InsitutionNameFilter := r.URL.Query().Get("institution")
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + AccomodationtypecodeFilter + "%', '%" + LocationFilter + "%' , '" + DistancetocampusFilter + "' , '%" + InsitutionNameFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -702,6 +780,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 
 			var isselling bool
 			for rows.Next() {
+				listEmpty = false
 				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &accomodationID, &accomodationtypecode, &location, &distancetocampus, &insitutionName)
 				if err != nil {
 					w.WriteHeader(500)
@@ -709,7 +788,13 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 					fmt.Println(err.Error())
 					return
 				}
+				accomodationAdvertList.listEmpty = listEmpty
 				accomodationAdvertList.Accomodations = append(accomodationAdvertList.Accomodations, GetAccomodationAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, accomodationID, accomodationtypecode, location, distancetocampus, insitutionName})
+			}
+
+			if listEmpty {
+				accomodationAdvertList.listEmpty = true
+				accomodationAdvertList.Accomodations = append(accomodationAdvertList.Accomodations, GetAccomodationAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", ""})
 			}
 			// get any error encountered during iteration
 			err = rows.Err()
@@ -733,7 +818,9 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "NTS":
-			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('" + resultLimit + "', ' " + isSelling + "')")
+
+			ModuleCodeFilter := r.URL.Query().Get("modulecode")
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + ModuleCodeFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -748,6 +835,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			var advertisementID, userID, advertisementType, price, description, noteID, modulecode string
 			var isselling bool
 			for rows.Next() {
+				listEmpty = false
 				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode)
 				if err != nil {
 					w.WriteHeader(500)
@@ -755,7 +843,13 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 					fmt.Println(err.Error())
 					return
 				}
+				noteAdvertList.listEmpty = listEmpty
 				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode})
+			}
+
+			if listEmpty {
+				noteAdvertList.listEmpty = true
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{"", "", false, "", "", "", "", ""})
 			}
 			// get any error encountered during iteration
 			err = rows.Err()
@@ -1611,7 +1705,7 @@ func (s *Server) handlegetaccomodationsbyfilter() http.HandlerFunc {
 		accomodationfilter.DistanceToCampus = r.URL.Query().Get("distancetocampus")
 
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
-		querystring := "SELECT * FROM getaccomodationbyfilter('%" + accomodationfilter.AccomodationTypeCode + "%', '%" + accomodationfilter.InstitutionName + "%' , '%" + accomodationfilter.Location + "%' , '%" + accomodationfilter.DistanceToCampus + "%')"
+		querystring := "SELECT * FROM getaccomodationbyfilter('%" + accomodationfilter.AccomodationTypeCode + "%', '%" + accomodationfilter.InstitutionName + "%' , '%" + accomodationfilter.Location + "%' , '" + accomodationfilter.DistanceToCampus + "')"
 		rows, err := s.dbAccess.Query(querystring)
 		if err != nil {
 			w.WriteHeader(500)
