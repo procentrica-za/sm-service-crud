@@ -405,6 +405,12 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 				}
 				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode})
 			}
+			if advertisementID == "" {
+				textbookAdvertList.listEmpty = true
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", ""})
+			} else {
+				textbookAdvertList.listEmpty = false
+			}
 			// get any error encountered during iteration
 			err = rows.Err()
 			if err != nil {
@@ -450,6 +456,13 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 					return
 				}
 				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode})
+			}
+
+			if advertisementID == "" {
+				tutorAdvertList.listEmpty = true
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", ""})
+			} else {
+				tutorAdvertList.listEmpty = false
 			}
 			// get any error encountered during iteration
 			err = rows.Err()
@@ -498,6 +511,13 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 				}
 				accomodationAdvertList.Accomodations = append(accomodationAdvertList.Accomodations, GetAccomodationAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, accomodationID, accomodationtypecode, location, distancetocampus, insitutionName})
 			}
+
+			if advertisementID == "" {
+				accomodationAdvertList.listEmpty = true
+				accomodationAdvertList.Accomodations = append(accomodationAdvertList.Accomodations, GetAccomodationAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", ""})
+			} else {
+				accomodationAdvertList.listEmpty = false
+			}
 			// get any error encountered during iteration
 			err = rows.Err()
 			if err != nil {
@@ -543,6 +563,13 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 					return
 				}
 				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode})
+			}
+
+			if advertisementID == "" {
+				noteAdvertList.listEmpty = true
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{"", "", false, "", "", "", "", ""})
+			} else {
+				noteAdvertList.listEmpty = false
 			}
 			// get any error encountered during iteration
 			err = rows.Err()
