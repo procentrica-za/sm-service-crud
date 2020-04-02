@@ -567,8 +567,8 @@ type UploadImageResult struct {
 //rate types
 type StartRating struct {
 	AdvertisementID string `json:"advertisementid"`
-	SellerID        string `json:"sellerid"`
 	BuyerID         string `json:"buyerid"`
+	SellerID        string `json:"sellerid"`
 	BuyerRating     string `json:"buyerrating"`
 	BuyerComments   string `json:"buyercomments"`
 }

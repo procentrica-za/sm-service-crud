@@ -24,7 +24,7 @@ func (s *Server) handleratebuyer() http.HandlerFunc {
 		var ratingid string
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.ratebuyer('" + rating.AdvertisementID + "','" + rating.SellerID + "','" + rating.BuyerID + "','" + rating.BuyerRating + "','" + rating.BuyerComments + "')"
+		querystring := "SELECT * FROM public.ratebuyer('" + rating.AdvertisementID + "','" + rating.BuyerID + "','" + rating.SellerID + "','" + rating.BuyerRating + "','" + rating.BuyerComments + "')"
 
 		//retrieve message from database tt set to JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&buyerrated, &ratingid)
