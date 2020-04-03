@@ -20,11 +20,12 @@ type UserLogin struct {
 	Password string `json:"password"`
 }
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	Email    string `json:"email"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	Name           string `json:"name"`
+	Surname        string `json:"surname"`
+	Email          string `json:"email"`
+	InsitutionName string `json:"institutionname"`
 }
 
 type getUser struct {
@@ -637,6 +638,15 @@ type ModuleCode struct {
 type ModuleCodeList struct {
 	Modulecodes []ModuleCode `json:"modulecodes"`
 }
+
+type InstitutionName struct {
+	Institutionname string `json:"institutionname"`
+}
+
+type InstitutionNameList struct {
+	Institutionnames []InstitutionName `json:"institutionnames"`
+}
+
 type Config struct {
 	ListenServePort string
 }

@@ -194,7 +194,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 		var username, userid, msg string
 
 		// create query string.
-		querystring := "SELECT * FROM public.registeruser('" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
+		querystring := "SELECT * FROM public.registeruser('" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "','" + user.InsitutionName + "')"
 
 		// query database and read response from database into variables.
 		err = s.dbAccess.QueryRow(querystring).Scan(&userCreated, &username, &userid, &msg)
@@ -375,6 +375,52 @@ func (s *Server) handleupdatepassword() http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to update password")
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handlegetinstitutions() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Get Institutions Has Been Called...")
+		querystring := "SELECT * FROM public.getinstitutions()"
+
+		rows, err := s.dbAccess.Query(querystring)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+
+		institutionNameList := InstitutionNameList{}
+		var institutionName string
+
+		for rows.Next() {
+			err = rows.Scan(&institutionName)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Institution Name List...")
+				fmt.Println(err.Error())
+				return
+			}
+			institutionNameList.Institutionnames = append(institutionNameList.Institutionnames, InstitutionName{institutionName})
+		}
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Institution Name List...")
+			return
+		}
+		js, jserr := json.Marshal(institutionNameList)
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
