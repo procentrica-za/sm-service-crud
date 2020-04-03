@@ -336,3 +336,47 @@ func (s *Server) handlegetinterestedbuyers() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+func (s *Server) handlegetratingstodo() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getratingstodoHas Been Called..")
+
+		// retrieving the ID of the user that is requested to be deleted.
+		userid := r.URL.Query().Get("userid")
+
+		// declaring variable to catch response from database.
+		var outstandingRatings bool
+
+		// building query string.
+		querystring := "SELECT * FROM public.ratingstodo('" + userid + "')"
+
+		// querying the database and reading response from database into variable.
+		err := s.dbAccess.QueryRow(querystring).Scan(&outstandingRatings)
+
+		// check for errors with reading response from database into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to the selected chat")
+			return
+		}
+
+		// declaring result struct for delete user.
+		unreadResult := OutstandingRatingResult{}
+		unreadResult.OutstandingRatings = outstandingRatings
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(unreadResult)
+
+		// check to see if any errors occured with coverting to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
+	}
+}
