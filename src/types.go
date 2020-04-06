@@ -654,6 +654,10 @@ type InstitutionNameList struct {
 	Institutionnames []InstitutionName `json:"institutionnames"`
 }
 
+type AverageResult struct {
+	Average string `json:"average"`
+}
+
 type Config struct {
 	ListenServePort string
 }
