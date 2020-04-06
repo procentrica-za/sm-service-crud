@@ -20,29 +20,32 @@ type UserLogin struct {
 	Password string `json:"password"`
 }
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	Email    string `json:"email"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	Name           string `json:"name"`
+	Surname        string `json:"surname"`
+	Email          string `json:"email"`
+	InsitutionName string `json:"institutionname"`
 }
 
 type getUser struct {
-	UserID   string `json:"id"`
-	Username string `json:"username"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	Email    string `json:"email"`
-	Message  string `json:"message"`
-	GotUser  bool   `json:"gotuser"`
+	UserID         string `json:"id"`
+	Username       string `json:"username"`
+	Name           string `json:"name"`
+	Surname        string `json:"surname"`
+	Email          string `json:"email"`
+	InsitutionName string `json:"institutionname"`
+	Message        string `json:"message"`
+	GotUser        bool   `json:"gotuser"`
 }
 
 type updateUser struct {
-	UserID   string `json:"id"`
-	Username string `json:"username"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	Email    string `json:"email"`
+	UserID         string `json:"id"`
+	Username       string `json:"username"`
+	Name           string `json:"name"`
+	Surname        string `json:"surname"`
+	Email          string `json:"email"`
+	InsitutionName string `json:"institutionname"`
 }
 
 type UpdatePassword struct {
@@ -602,6 +605,10 @@ type OutstandingRatingList struct {
 	Oustandingratings []GetOutstandingResult `json:"outstandingratings"`
 }
 
+type OutstandingRatingResult struct {
+	OutstandingRatings bool `json:"outstandingratings"`
+}
+
 type GetPreviousResult struct {
 	RatingID string `json:"ratingid"`
 	UserName string `json:"username"`
@@ -637,6 +644,15 @@ type ModuleCode struct {
 type ModuleCodeList struct {
 	Modulecodes []ModuleCode `json:"modulecodes"`
 }
+
+type InstitutionName struct {
+	Institutionname string `json:"institutionname"`
+}
+
+type InstitutionNameList struct {
+	Institutionnames []InstitutionName `json:"institutionnames"`
+}
+
 type Config struct {
 	ListenServePort string
 }

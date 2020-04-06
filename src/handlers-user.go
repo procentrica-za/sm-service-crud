@@ -144,7 +144,7 @@ func (s *Server) handleupdateuser() http.HandlerFunc {
 		var userUpdated bool
 		var msg string
 		// building query string.
-		querystring := "SELECT * FROM public.updateuser('" + user.UserID + "','" + user.Username + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
+		querystring := "SELECT * FROM public.updateuser('" + user.UserID + "','" + user.Username + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "','" + user.InsitutionName + "')"
 		// query the database and read results into variables.
 		err = s.dbAccess.QueryRow(querystring).Scan(&userUpdated, &msg)
 		// check for errors with reading database result into variables.
@@ -194,7 +194,7 @@ func (s *Server) handleregisteruser() http.HandlerFunc {
 		var username, userid, msg string
 
 		// create query string.
-		querystring := "SELECT * FROM public.registeruser('" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "')"
+		querystring := "SELECT * FROM public.registeruser('" + user.Username + "','" + user.Password + "','" + user.Name + "','" + user.Surname + "','" + user.Email + "','" + user.InsitutionName + "')"
 
 		// query database and read response from database into variables.
 		err = s.dbAccess.QueryRow(querystring).Scan(&userCreated, &username, &userid, &msg)
@@ -240,12 +240,12 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		userid.UserID = getuserid
 
 		// declare variables to catch response from database.
-		var id, username, name, surname, email string
+		var id, username, name, surname, email, institutionname string
 		var successget bool
 
 		// create query string.
 		querystring := "SELECT * FROM public.getuser('" + userid.UserID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email, &successget)
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email, &institutionname, &successget)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -261,6 +261,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 			user.Name = name
 			user.Surname = surname
 			user.Email = email
+			user.InsitutionName = institutionname
 			user.Message = "This User does not exist"
 			user.GotUser = successget
 		} else {
@@ -269,6 +270,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 			user.Name = name
 			user.Surname = surname
 			user.Email = email
+			user.InsitutionName = institutionname
 			user.Message = "This user exists"
 			user.GotUser = successget
 		}
@@ -375,6 +377,52 @@ func (s *Server) handleupdatepassword() http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to update password")
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handlegetinstitutions() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Get Institutions Has Been Called...")
+		querystring := "SELECT * FROM public.getinstitutions()"
+
+		rows, err := s.dbAccess.Query(querystring)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+
+		institutionNameList := InstitutionNameList{}
+		var institutionName string
+
+		for rows.Next() {
+			err = rows.Scan(&institutionName)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Institution Name List...")
+				fmt.Println(err.Error())
+				return
+			}
+			institutionNameList.Institutionnames = append(institutionNameList.Institutionnames, InstitutionName{institutionName})
+		}
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Institution Name List...")
+			return
+		}
+		js, jserr := json.Marshal(institutionNameList)
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)

@@ -323,7 +323,7 @@ func (s *Server) handleaddmessage() http.HandlerFunc {
 
 func (s *Server) handlegetunreadmessages() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Delete Chat Has Been Called..")
+		fmt.Println("Handle Getunreadmessages Has Been Called..")
 
 		// retrieving the ID of the user that is requested to be deleted.
 		userid := r.URL.Query().Get("userid")
