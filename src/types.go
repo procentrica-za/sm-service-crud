@@ -49,8 +49,9 @@ type updateUser struct {
 }
 
 type UpdatePassword struct {
-	UserID   string `json:"id"`
-	Password string `json:"password"`
+	UserID          string `json:"id"`
+	CurrentPassword string `json:"currentpassword"`
+	Password        string `json:"password"`
 }
 
 type UpdatePasswordResult struct {
