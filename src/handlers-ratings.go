@@ -409,8 +409,8 @@ func (s *Server) handlegetbuyerdashboard() http.HandlerFunc {
 		// declaring result struct for delete user.
 		averageResult := AverageResult{}
 
-		if average == "" {
-			averageResult.Average = "Work"
+		if average == "0" {
+			averageResult.Average = "You have not been rated as a buyer yet"
 		} else {
 			newaverage := strings.Replace(average, "0", "", -1)
 			averageResult.Average = newaverage
@@ -460,8 +460,8 @@ func (s *Server) handlegetsellerdashboard() http.HandlerFunc {
 		// declaring result struct for delete user.
 		averageResult := AverageResult{}
 
-		if average == "" {
-			averageResult.Average = "Work"
+		if average == "0" {
+			averageResult.Average = "You have not been rated as a seller yet"
 		} else {
 			newaverage := strings.Replace(average, "0", "", -1)
 			averageResult.Average = newaverage
