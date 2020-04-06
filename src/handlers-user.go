@@ -355,7 +355,7 @@ func (s *Server) handleupdatepassword() http.HandlerFunc {
 		var passwordUpdated bool
 		var msg string
 		// building query string.
-		querystring := "SELECT * FROM public.updatepassword('" + password.UserID + "','" + password.Password + "','" + password.CurrentPassword + "')"
+		querystring := "SELECT * FROM public.updatepassword('" + password.UserID + "','" + password.CurrentPassword + "','" + password.Password + "')"
 		// query the database and read results into variables.
 		err = s.dbAccess.QueryRow(querystring).Scan(&passwordUpdated, &msg)
 		// check for errors with reading database result into variables.
