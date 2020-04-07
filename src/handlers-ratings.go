@@ -380,3 +380,105 @@ func (s *Server) handlegetratingstodo() http.HandlerFunc {
 
 	}
 }
+
+func (s *Server) handlegetbuyerdashboard() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getbuyerdashboard Been Called..")
+
+		// retrieving the ID of the user that is requested to be deleted.
+		userid := r.URL.Query().Get("userid")
+
+		// declaring variable to catch response from database.
+		var average string
+
+		// building query string.
+		querystring := "SELECT * FROM public.buyerdashboard('" + userid + "')"
+
+		// querying the database and reading response from database into variable.
+		err := s.dbAccess.QueryRow(querystring).Scan(&average)
+
+		// check for errors with reading response from database into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to the selected chat")
+			return
+		}
+
+		// declaring result struct for delete user.
+		averageResult := AverageResult{}
+
+		if average == "0" {
+			averageResult.Average = "0.0"
+		} else {
+			newaverage := average[:len(average)-15]
+			averageResult.Average = newaverage
+		}
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(averageResult)
+
+		// check to see if any errors occured with coverting to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
+	}
+}
+
+func (s *Server) handlegetsellerdashboard() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getsellerdashboard Been Called..")
+
+		// retrieving the ID of the user that is requested to be deleted.
+		userid := r.URL.Query().Get("userid")
+
+		// declaring variable to catch response from database.
+		var average string
+
+		// building query string.
+		querystring := "SELECT * FROM public.sellerdashboard('" + userid + "')"
+
+		// querying the database and reading response from database into variable.
+		err := s.dbAccess.QueryRow(querystring).Scan(&average)
+
+		// check for errors with reading response from database into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to the selected chat")
+			return
+		}
+
+		// declaring result struct for delete user.
+		averageResult := AverageResult{}
+
+		if average == "0" {
+			averageResult.Average = "0.0"
+		} else {
+			newaverage := average[:len(average)-15]
+			averageResult.Average = newaverage
+		}
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(averageResult)
+
+		// check to see if any errors occured with coverting to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
+	}
+}

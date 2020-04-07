@@ -35,6 +35,7 @@ type getUser struct {
 	Surname        string `json:"surname"`
 	Email          string `json:"email"`
 	InsitutionName string `json:"institutionname"`
+	AdsRemaining   string `json:"adsremaining"`
 	Message        string `json:"message"`
 	GotUser        bool   `json:"gotuser"`
 }
@@ -49,8 +50,9 @@ type updateUser struct {
 }
 
 type UpdatePassword struct {
-	UserID   string `json:"id"`
-	Password string `json:"password"`
+	UserID          string `json:"id"`
+	CurrentPassword string `json:"currentpassword"`
+	Password        string `json:"password"`
 }
 
 type UpdatePasswordResult struct {
@@ -651,6 +653,10 @@ type InstitutionName struct {
 
 type InstitutionNameList struct {
 	Institutionnames []InstitutionName `json:"institutionnames"`
+}
+
+type AverageResult struct {
+	Average string `json:"average"`
 }
 
 type Config struct {
