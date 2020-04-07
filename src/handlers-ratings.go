@@ -410,7 +410,7 @@ func (s *Server) handlegetbuyerdashboard() http.HandlerFunc {
 		averageResult := AverageResult{}
 
 		if average == "0" {
-			averageResult.Average = "You have not been rated as a buyer yet"
+			averageResult.Average = "0"
 		} else {
 			newaverage := strings.Replace(average, "0", "", -1)
 			averageResult.Average = newaverage
@@ -461,7 +461,7 @@ func (s *Server) handlegetsellerdashboard() http.HandlerFunc {
 		averageResult := AverageResult{}
 
 		if average == "0" {
-			averageResult.Average = "You have not been rated as a seller yet"
+			averageResult.Average = "0"
 		} else {
 			newaverage := strings.Replace(average, "0", "", -1)
 			averageResult.Average = newaverage
