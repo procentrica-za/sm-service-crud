@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 )
 
 func (s *Server) handleratebuyer() http.HandlerFunc {
@@ -410,9 +409,9 @@ func (s *Server) handlegetbuyerdashboard() http.HandlerFunc {
 		averageResult := AverageResult{}
 
 		if average == "0" {
-			averageResult.Average = "0"
+			averageResult.Average = "0.0"
 		} else {
-			newaverage := strings.Replace(average, "0", "", -1)
+			newaverage := average[:len(average)-15]
 			averageResult.Average = newaverage
 		}
 
@@ -461,11 +460,12 @@ func (s *Server) handlegetsellerdashboard() http.HandlerFunc {
 		averageResult := AverageResult{}
 
 		if average == "0" {
-			averageResult.Average = "0"
+			averageResult.Average = "0.0"
 		} else {
-			newaverage := strings.Replace(average, "0", "", -1)
+			newaverage := average[:len(average)-15]
 			averageResult.Average = newaverage
 		}
+
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(averageResult)
 

@@ -240,12 +240,12 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		userid.UserID = getuserid
 
 		// declare variables to catch response from database.
-		var id, username, name, surname, email, institutionname string
+		var id, username, name, surname, email, institutionname, adsremaining string
 		var successget bool
 
 		// create query string.
 		querystring := "SELECT * FROM public.getuser('" + userid.UserID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email, &institutionname, &successget)
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &name, &surname, &email, &institutionname, &adsremaining, &successget)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -262,6 +262,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 			user.Surname = surname
 			user.Email = email
 			user.InsitutionName = institutionname
+			user.AdsRemaining = adsremaining
 			user.Message = "This User does not exist"
 			user.GotUser = successget
 		} else {
@@ -271,6 +272,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 			user.Surname = surname
 			user.Email = email
 			user.InsitutionName = institutionname
+			user.AdsRemaining = adsremaining
 			user.Message = "This user exists"
 			user.GotUser = successget
 		}
