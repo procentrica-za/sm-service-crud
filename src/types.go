@@ -73,6 +73,7 @@ type LoginUserResult struct {
 	UserID       string `json:"id"`
 	Username     string `json:"username"`
 	UserLoggedIn bool   `json:"userloggedin"`
+	Institution  string `json:"institution"`
 	Message      string `json:"message"`
 }
 
@@ -112,6 +113,7 @@ type PostAdvertisement struct {
 	EntityID          string `json:"entityid"`
 	Price             string `json:"price"`
 	Description       string `json:"description"`
+	Institution       string `json:"institution"`
 }
 
 type PostAdvertisementResult struct {
@@ -200,6 +202,7 @@ type GetTextbookAdvertisementsResult struct {
 	Quality           string `json:"quality"`
 	Author            string `json:"author"`
 	ModuleCode        string `json:"modulecode"`
+	InsitutionName    string `json:"institutionname"`
 }
 
 type TextbookAdvertisementList struct {
@@ -221,6 +224,7 @@ type GetTutorAdvertisementsResult struct {
 	Notesincluded     string `json:"notesincluded"`
 	Terms             string `json:"terms"`
 	Modulecode        string `json:"modulecode"`
+	InsitutionName    string `json:"institutionname"`
 }
 
 type TutorAdvertisementList struct {
@@ -256,6 +260,7 @@ type GetNoteAdvertisementsResult struct {
 	Description       string `json:"description"`
 	NoteID            string `json:"noteid"`
 	ModuleCode        string `json:"modulecode"`
+	InsitutionName    string `json:"institutionname"`
 }
 
 type NoteAdvertisementList struct {

@@ -23,7 +23,7 @@ func (s *Server) handlepostadvertisement() http.HandlerFunc {
 		var id, message string
 
 		//communcate with the database
-		querystring := "SELECT * FROM public.addadvertisement('" + advertisement.UserID + "','" + advertisement.IsSelling + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "')"
+		querystring := "SELECT * FROM public.addadvertisement('" + advertisement.UserID + "','" + advertisement.IsSelling + "','" + advertisement.AdvertisementType + "','" + advertisement.EntityID + "','" + advertisement.Price + "','" + advertisement.Description + "','" + advertisement.Institution + "')"
 
 		//retrieve message from database tt set to JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&advertisementposted, &id, &message)
@@ -392,22 +392,22 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			textbookAdvertList := TextbookAdvertisementList{}
 			textbookAdvertList.Textbooks = []GetTextbookAdvertisementsResult{}
 
-			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode string
+			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode, instName string
 			var isselling bool
 
 			for rows.Next() {
-				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode)
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode, &instName)
 				if err != nil {
 					w.WriteHeader(500)
 					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
 					fmt.Println(err.Error())
 					return
 				}
-				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode})
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode, instName})
 			}
 			if advertisementID == "" {
 				textbookAdvertList.listEmpty = true
-				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", ""})
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", ""})
 			} else {
 				textbookAdvertList.listEmpty = false
 			}
@@ -445,22 +445,22 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			tutorAdvertList := TutorAdvertisementList{}
 			tutorAdvertList.Tutors = []GetTutorAdvertisementsResult{}
 
-			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode string
+			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode, instName string
 			var isselling bool
 			for rows.Next() {
-				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode)
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode, &instName)
 				if err != nil {
 					w.WriteHeader(500)
 					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
 					fmt.Println(err.Error())
 					return
 				}
-				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode})
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode, instName})
 			}
 
 			if advertisementID == "" {
 				tutorAdvertList.listEmpty = true
-				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", ""})
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", "", ""})
 			} else {
 				tutorAdvertList.listEmpty = false
 			}
@@ -552,22 +552,22 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			noteAdvertList := NoteAdvertisementList{}
 			noteAdvertList.Notes = []GetNoteAdvertisementsResult{}
 
-			var advertisementID, userID, advertisementType, price, description, noteID, modulecode string
+			var advertisementID, userID, advertisementType, price, description, noteID, modulecode, instName string
 			var isselling bool
 			for rows.Next() {
-				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode)
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode, &instName)
 				if err != nil {
 					w.WriteHeader(500)
 					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
 					fmt.Println(err.Error())
 					return
 				}
-				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode})
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode, instName})
 			}
 
 			if advertisementID == "" {
 				noteAdvertList.listEmpty = true
-				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{"", "", false, "", "", "", "", ""})
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{"", "", false, "", "", "", "", "", ""})
 			} else {
 				noteAdvertList.listEmpty = false
 			}
@@ -659,6 +659,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 		resultLimit := r.URL.Query().Get("limit")
 		isSelling := r.URL.Query().Get("selling")
 		priceFilter := r.URL.Query().Get("price")
+		institutionFilter := r.URL.Query().Get("institution")
 		if resultLimit == "" {
 			resultLimit = "10"
 		}
@@ -673,7 +674,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			EditionFilter := r.URL.Query().Get("edition")
 			QualityFilter := r.URL.Query().Get("quality")
 			AuthorFilter := r.URL.Query().Get("author")
-			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + ModuleCodeFilter + "%', '%" + NameFilter + "%' , '%" + EditionFilter + "%' , '%" + QualityFilter + "%' , '%" + AuthorFilter + "%')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisements('%" + institutionFilter + "%' , '" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + ModuleCodeFilter + "%', '%" + NameFilter + "%' , '%" + EditionFilter + "%' , '%" + QualityFilter + "%' , '%" + AuthorFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -685,22 +686,22 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			textbookAdvertList := TextbookAdvertisementList{}
 			textbookAdvertList.Textbooks = []GetTextbookAdvertisementsResult{}
 
-			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode string
+			var advertisementID, userID, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode, instName string
 			var isselling bool
 			for rows.Next() {
-				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode)
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &textbookID, &textbookName, &edition, &quality, &author, &moduleCode, &instName)
 				if err != nil {
 					w.WriteHeader(500)
 					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
 					fmt.Println(err.Error())
 					return
 				}
-				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode})
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, textbookID, textbookName, edition, quality, author, moduleCode, instName})
 			}
 			if advertisementID == "" {
 				listEmpty = true
 				textbookAdvertList.listEmpty = true
-				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", ""})
+				textbookAdvertList.Textbooks = append(textbookAdvertList.Textbooks, GetTextbookAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", ""})
 			} else {
 				textbookAdvertList.listEmpty = false
 			}
@@ -733,7 +734,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			VenueFilter := r.URL.Query().Get("venue")
 			NotesincludedFilter := r.URL.Query().Get("notes")
 			TermsFilter := r.URL.Query().Get("terms")
-			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + SubjectFilter + "%', '%" + YearcompletedFilter + "%' , '%" + VenueFilter + "%' , '%" + NotesincludedFilter + "%' , '%" + TermsFilter + "%' , '%" + ModuleCodeFilter + "%')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisements('%" + institutionFilter + "%' , '" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + SubjectFilter + "%', '%" + YearcompletedFilter + "%' , '%" + VenueFilter + "%' , '%" + NotesincludedFilter + "%' , '%" + TermsFilter + "%' , '%" + ModuleCodeFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -745,12 +746,12 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			tutorAdvertList := TutorAdvertisementList{}
 			tutorAdvertList.Tutors = []GetTutorAdvertisementsResult{}
 
-			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode string
+			var advertisementID, userID, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode, instName string
 			var isselling bool
 
 			for rows.Next() {
 				listEmpty = false
-				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode)
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &tutorID, &subject, &yearcompleted, &venue, &notesincluded, &terms, &modulecode, &instName)
 				if err != nil {
 					w.WriteHeader(500)
 					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
@@ -758,11 +759,11 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 					return
 				}
 				tutorAdvertList.listEmpty = false
-				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode})
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, tutorID, subject, yearcompleted, venue, notesincluded, terms, modulecode, instName})
 			}
 			if listEmpty {
 				tutorAdvertList.listEmpty = true
-				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", ""})
+				tutorAdvertList.Tutors = append(tutorAdvertList.Tutors, GetTutorAdvertisementsResult{"", "", false, "", "", "", "", "", "", "", "", "", "", ""})
 			}
 
 			// get any error encountered during iteration
@@ -790,8 +791,8 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			AccomodationtypecodeFilter := r.URL.Query().Get("acdType")
 			LocationFilter := r.URL.Query().Get("location")
 			DistancetocampusFilter := r.URL.Query().Get("distance")
-			InsitutionNameFilter := r.URL.Query().Get("institution")
-			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + AccomodationtypecodeFilter + "%', '%" + LocationFilter + "%' , '" + DistancetocampusFilter + "' , '%" + InsitutionNameFilter + "%')")
+			//InsitutionNameFilter := r.URL.Query().Get("institution")
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisements('%" + institutionFilter + "%' , '" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + AccomodationtypecodeFilter + "%', '%" + LocationFilter + "%' , '" + DistancetocampusFilter + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -847,7 +848,7 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 		case advertisementType == "NTS":
 
 			ModuleCodeFilter := r.URL.Query().Get("modulecode")
-			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + ModuleCodeFilter + "%')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisements('%" + institutionFilter + "%' , '" + resultLimit + "', '" + isSelling + "', '" + priceFilter + "','%" + ModuleCodeFilter + "%')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -859,11 +860,11 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 			noteAdvertList := NoteAdvertisementList{}
 			noteAdvertList.Notes = []GetNoteAdvertisementsResult{}
 
-			var advertisementID, userID, advertisementType, price, description, noteID, modulecode string
+			var advertisementID, userID, advertisementType, price, description, noteID, modulecode, instName string
 			var isselling bool
 			for rows.Next() {
 				listEmpty = false
-				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode)
+				err = rows.Scan(&advertisementID, &userID, &isselling, &advertisementType, &price, &description, &noteID, &modulecode, &instName)
 				if err != nil {
 					w.WriteHeader(500)
 					fmt.Fprintf(w, "Unable to read data from Advertisement List...")
@@ -871,12 +872,12 @@ func (s *Server) handlegetadvertisementbytype() http.HandlerFunc {
 					return
 				}
 				noteAdvertList.listEmpty = listEmpty
-				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode})
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{advertisementID, userID, isselling, advertisementType, price, description, noteID, modulecode, instName})
 			}
 
 			if listEmpty {
 				noteAdvertList.listEmpty = true
-				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{"", "", false, "", "", "", "", ""})
+				noteAdvertList.Notes = append(noteAdvertList.Notes, GetNoteAdvertisementsResult{"", "", false, "", "", "", "", "", ""})
 			}
 			// get any error encountered during iteration
 			err = rows.Err()

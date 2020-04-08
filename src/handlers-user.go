@@ -23,14 +23,14 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 		userLogin.Password = getpassword
 
 		// declaring variables to catch response from database.
-		var userid, username string
+		var userid, username, institution string
 		var successLogin bool
 
 		// build query string.
 		querystring := "SELECT * FROM public.loginuser('" + userLogin.Username + "','" + userLogin.Password + "')"
 
 		// querying the database and scanning database results into variables.
-		err := s.dbAccess.QueryRow(querystring).Scan(&userid, &username, &successLogin)
+		err := s.dbAccess.QueryRow(querystring).Scan(&userid, &username, &successLogin, &institution)
 
 		// checking for any errors with reading db response into variables.
 		if err != nil {
@@ -46,11 +46,13 @@ func (s *Server) handleloginuser() http.HandlerFunc {
 			loginUserResult.UserLoggedIn = successLogin
 			loginUserResult.UserID = ""
 			loginUserResult.Username = username
+			loginUserResult.Institution = ""
 			loginUserResult.Message = "Wrong username and password combination for user: " + username + " !"
 		} else {
 			loginUserResult.UserLoggedIn = successLogin
 			loginUserResult.UserID = userid
 			loginUserResult.Username = username
+			loginUserResult.Institution = institution
 			loginUserResult.Message = "Welcome! " + username
 		}
 
