@@ -258,7 +258,7 @@ func (s *Server) handlegetuser() http.HandlerFunc {
 		// instansiate response struct.
 		user := getUser{}
 		if id == "00000000-0000-0000-0000-000000000000" {
-			user.UserID = ""
+			user.UserID = "00000000-0000-0000-0000-000000000000"
 			user.Username = username
 			user.Name = name
 			user.Surname = surname
