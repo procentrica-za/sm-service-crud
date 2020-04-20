@@ -977,13 +977,13 @@ func (s *Server) handleaddtextbook() http.HandlerFunc {
 
 		// set response variables.
 		var textbookAdded bool
-		var id string
+		var id, modulecode, name, edition, quality, author string
 
 		// write querystring
 		querystring := "SELECT * FROM public.addtextbook('" + textbook.ModuleCode + "','" + textbook.Name + "','" + textbook.Edition + "','" + textbook.Quality + "','" + textbook.Author + "')"
 
 		// query the database.
-		err = s.dbAccess.QueryRow(querystring).Scan(&textbookAdded, &id)
+		err = s.dbAccess.QueryRow(querystring).Scan(&textbookAdded, &id, &modulecode, &name, &edition, &quality, &author)
 
 		//check for response error of 500
 		if err != nil {
@@ -1001,11 +1001,19 @@ func (s *Server) handleaddtextbook() http.HandlerFunc {
 		if textbookAdded {
 			postTextbookResult.TextbookAdded = textbookAdded
 			postTextbookResult.TextbookID = id
-			postTextbookResult.Message = "Textbook Successfully Added!"
+			postTextbookResult.ModuleCode = modulecode
+			postTextbookResult.Name = name
+			postTextbookResult.Edition = edition
+			postTextbookResult.Quality = quality
+			postTextbookResult.Author = author
 		} else {
 			postTextbookResult.TextbookAdded = textbookAdded
 			postTextbookResult.TextbookID = id
-			postTextbookResult.Message = "Failed to add Textbook!"
+			postTextbookResult.ModuleCode = modulecode
+			postTextbookResult.Name = name
+			postTextbookResult.Edition = edition
+			postTextbookResult.Quality = quality
+			postTextbookResult.Author = author
 		}
 
 		//convert struct back to JSON
