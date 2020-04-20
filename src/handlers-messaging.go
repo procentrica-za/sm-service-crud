@@ -99,7 +99,7 @@ func (s *Server) handledeletechat() http.HandlerFunc {
 		if chatDeleted {
 			deleteChatResult.Message = "Chat Successfully Deleted!"
 		} else {
-			deleteChatResult.Message = "Unable to Selected Chat!"
+			deleteChatResult.Message = "Unable to Delete Chat!"
 		}
 
 		// convert struct into JSON payload to send to service that called this function.
