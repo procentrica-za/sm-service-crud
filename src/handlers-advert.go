@@ -1089,7 +1089,7 @@ func (s *Server) handlegettextbooksbyfilter() http.HandlerFunc {
 		textbookfilter.Edition = r.URL.Query().Get("edition")
 		textbookfilter.Quality = r.URL.Query().Get("quality")
 		textbookfilter.Author = r.URL.Query().Get("author")
-
+		fmt.Println(textbookfilter.Name)
 		//Build Query for Filtering by prepending and appending % to the filtering queries.
 		querystring := "SELECT * FROM gettextbookbyfilter('%" + textbookfilter.ModuleCode + "%', '%" + textbookfilter.Name + "%' , '%" + textbookfilter.Edition + "%' , '%" + textbookfilter.Quality + "%' , '%" + textbookfilter.Author + "%')"
 		rows, err := s.dbAccess.Query(querystring)
