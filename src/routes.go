@@ -11,6 +11,8 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/userpassword", s.handleupdatepassword()).Methods("PUT")
 	s.router.HandleFunc("/institution", s.handlegetinstitutions()).Methods("GET")
 	s.router.HandleFunc("/otp", s.handlegetotp()).Methods("GET")
+	s.router.HandleFunc("/otp", s.handlevalidateotp()).Methods("PUT")
+	s.router.HandleFunc("/newotp", s.handlegetnewotp()).Methods("GET")
 
 	//Adhandler routes
 	s.router.HandleFunc("/advertisement", s.handlepostadvertisement()).Methods("POST")

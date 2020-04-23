@@ -675,6 +675,16 @@ type RequestOtpResult struct {
 	Otp         string `json:"otp"`
 }
 
+type ValidateOtp struct {
+	UserID string `json:"userid"`
+	Otp    string `json:"otp"`
+}
+
+type ValidateOtpResult struct {
+	Validated bool   `json:"validated"`
+	Message   string `'json:"message"`
+}
+
 type Config struct {
 	ListenServePort string
 }
