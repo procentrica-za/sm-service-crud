@@ -432,3 +432,53 @@ func (s *Server) handlegetinstitutions() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handlegetotp() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Getotp Has Been Called..")
+
+		// retrieving the ID of the user that is requested to be deleted.
+		userid := r.URL.Query().Get("userid")
+		phonenumber := r.URL.Query().Get("phonenumber")
+
+		// declaring variable to catch response from database.
+		var sent bool
+		var message, number, otp string
+
+		// building query string.
+		querystring := "SELECT * FROM public.requestotp('" + userid + "','" + phonenumber + "')"
+
+		// querying the database and reading response from database into variable.
+		err := s.dbAccess.QueryRow(querystring).Scan(&sent, &message, &number, &otp)
+
+		// check for errors with reading response from database into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to request OTP")
+			return
+		}
+
+		// declaring result struct for delete user.
+		requestOtp := RequestOtpResult{}
+		requestOtp.Sent = sent
+		requestOtp.Message = message
+		requestOtp.Phonenumber = number
+		requestOtp.Otp = otp
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(requestOtp)
+
+		// check to see if any errors occured with coverting to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to request OTP")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
+	}
+}

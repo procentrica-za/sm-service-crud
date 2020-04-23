@@ -668,6 +668,13 @@ type AverageResult struct {
 	Average string `json:"average"`
 }
 
+type RequestOtpResult struct {
+	Sent        bool   `json:"sent"`
+	Message     string `'json:"message"`
+	Phonenumber string `json:"phonenumber"`
+	Otp         string `json:"otp"`
+}
+
 type Config struct {
 	ListenServePort string
 }
