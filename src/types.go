@@ -685,6 +685,10 @@ type ValidateOtpResult struct {
 	Message   string `'json:"message"`
 }
 
+type Status struct {
+	Isverified bool `json:"isverified"`
+}
+
 type Config struct {
 	ListenServePort string
 }

@@ -598,3 +598,48 @@ func (s *Server) handlegetnewotp() http.HandlerFunc {
 
 	}
 }
+
+func (s *Server) handlegetverificationstatus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle getverificationstatus Been Called..")
+
+		// retrieving the ID of the user that is requested to be deleted.
+		userid := r.URL.Query().Get("userid")
+
+		// declaring variable to catch response from database.
+		var isverified bool
+
+		// building query string.
+		querystring := "SELECT * FROM public.verifieduser('" + userid + "')"
+
+		// querying the database and reading response from database into variable.
+		err := s.dbAccess.QueryRow(querystring).Scan(&isverified)
+
+		// check for errors with reading response from database into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to get status")
+			return
+		}
+
+		// declaring result struct for delete user.
+		isverifiedResult := Status{}
+		isverifiedResult.Isverified = isverified
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(isverifiedResult)
+
+		// check to see if any errors occured with coverting to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to get status")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+
+	}
+}
