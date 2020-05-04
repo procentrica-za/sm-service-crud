@@ -82,4 +82,10 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/buyer", s.handlegetbuyerdashboard()).Methods("GET")
 	s.router.HandleFunc("/seller", s.handlegetsellerdashboard()).Methods("GET")
 
+	/*
+		======================================= Purchase Ads ====================================
+	*/
+
+	s.router.HandleFunc("/purchase", s.handlepurchaseads()).Methods("PUT")
+
 }

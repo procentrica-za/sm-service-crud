@@ -643,3 +643,49 @@ func (s *Server) handlegetverificationstatus() http.HandlerFunc {
 
 	}
 }
+
+func (s *Server) handlepurchaseads() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Purchase Advertisement Has Been Called...")
+		// declare a updateUser struct.
+		purchaseAdvertisementToken := PurchaseAdvertisement{}
+		// convert received JSON payload into the declared struct.
+		err := json.NewDecoder(r.Body).Decode(&purchaseAdvertisementToken)
+		//check for errors when converting JSON payload into struct.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to purchase advertisement token")
+			return
+		}
+		// declare variables to catch response from database.
+		var success bool
+		var message string
+		// building query string.
+		querystring := "SELECT * FROM public.purchaseads('" + purchaseAdvertisementToken.ID + "','" + purchaseAdvertisementToken.Ammount + "')"
+		// query the database and read results into variables.
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		// check for errors with reading database result into variables.
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to purchase advertisement token")
+			return
+		}
+		// instansiate result struct.
+		purchaseAdvertisementTokenResult := PurchaseAdvertisementResult{}
+		purchaseAdvertisementTokenResult.Success = success
+		purchaseAdvertisementTokenResult.Message = message
+
+		// convert struct into JSON payload to send to service that called this fuction.
+		js, jserr := json.Marshal(purchaseAdvertisementTokenResult)
+		// check for errors in converting struct to JSON.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to purchase advertisement token")
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
