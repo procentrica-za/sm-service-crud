@@ -689,3 +689,54 @@ func (s *Server) handlepurchaseads() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get a users details based on their emauil
+func (s *Server) handlegetpassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Get Password Has Been Called...")
+		// retrieving the ID of the user that is requested.
+		email := r.URL.Query().Get("email")
+
+		// declare variables to catch response from database.
+		var id, username, password string
+		var successget bool
+
+		// create query string.
+		querystring := "SELECT * FROM public.getpassword('" + email + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&id, &username, &password, &successget)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to get user based on email")
+			return
+		}
+
+		// instansiate response struct.
+		user := getPassword{}
+		if id == "00000000-0000-0000-0000-000000000000" {
+			user.UserID = "00000000-0000-0000-0000-000000000000"
+			user.Username = username
+			user.Password = password
+			user.GotUser = successget
+		} else {
+			user.UserID = id
+			user.Username = username
+			user.Password = password
+			user.GotUser = successget
+		}
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(user)
+
+		// check for errors when converting struct into JSON payload.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}

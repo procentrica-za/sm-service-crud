@@ -694,6 +694,13 @@ type PurchaseAdvertisementResult struct {
 	Message string `json:"message"`
 }
 
+type getPassword struct {
+	UserID   string `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	GotUser  bool   `json:"gotuser"`
+}
+
 type Status struct {
 	Isverified bool `json:"isverified"`
 }
