@@ -369,18 +369,14 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 		userid := r.URL.Query().Get("id")
 		advertisementType := r.URL.Query().Get("adverttype")
 		resultLimit := r.URL.Query().Get("limit")
-		isSelling := r.URL.Query().Get("selling")
 
 		if resultLimit == "" {
 			resultLimit = "10"
 		}
-		if isSelling == "" {
-			isSelling = "true"
-		}
 
 		switch {
 		case advertisementType == "TXB":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisementsbyuserid('" + userid + "', '" + resultLimit + "', '" + isSelling + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -433,7 +429,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "TUT":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisementsbyuserid('" + userid + "', '" + resultLimit + "', '" + isSelling + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -486,7 +482,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "ACD":
-			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisementsbyuserid('" + userid + "', '" + resultLimit + "', '" + isSelling + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -540,7 +536,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "NTS":
-			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisementsbyuserid('" + userid + "', '" + resultLimit + "', ' " + isSelling + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
