@@ -7,6 +7,7 @@ import (
 )
 
 func (s *Server) handlepostadvertisement() http.HandlerFunc {
+	fmt.Println("Handle Post Advertisement has been called!")
 	return func(w http.ResponseWriter, r *http.Request) {
 		//get JSON payload
 		advertisement := PostAdvertisement{}
