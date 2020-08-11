@@ -205,6 +205,7 @@ type GetTextbookAdvertisementsResult struct {
 	Author            string `json:"author"`
 	ModuleCode        string `json:"modulecode"`
 	InsitutionName    string `json:"institutionname"`
+	RowNumber         string `json:"rownumber"`
 }
 
 type TextbookAdvertisementList struct {
@@ -227,6 +228,7 @@ type GetTutorAdvertisementsResult struct {
 	Terms             string `json:"terms"`
 	Modulecode        string `json:"modulecode"`
 	InsitutionName    string `json:"institutionname"`
+	RowNumber         string `json:"rownumber"`
 }
 
 type TutorAdvertisementList struct {
@@ -246,6 +248,7 @@ type GetAccomodationAdvertisementsResult struct {
 	Location             string `json:"location"`
 	Distancetocampus     string `json:"distancetocampus"`
 	InsitutionName       string `json:"institutionname"`
+	RowNumber            string `json:"rownumber"`
 }
 
 type AccomodationAdvertisementList struct {
@@ -263,6 +266,7 @@ type GetNoteAdvertisementsResult struct {
 	NoteID            string `json:"noteid"`
 	ModuleCode        string `json:"modulecode"`
 	InsitutionName    string `json:"institutionname"`
+	RowNumber         string `json:"rownumber"`
 }
 
 type NoteAdvertisementList struct {
