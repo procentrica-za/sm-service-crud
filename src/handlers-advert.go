@@ -377,7 +377,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 
 		switch {
 		case advertisementType == "TXB":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettextbookadvertisementsbyuserid('" + userid + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -430,7 +430,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "TUT":
-			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM gettutoradvertisementsbyuserid('" + userid + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -483,7 +483,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "ACD":
-			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getaccomodationadvertisementsbyuserid('" + userid + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
@@ -537,7 +537,7 @@ func (s *Server) handlegetuseradvertisements() http.HandlerFunc {
 			w.Write(js)
 
 		case advertisementType == "NTS":
-			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisementsbyuserid('" + userid + "', '" + resultLimit + "')")
+			rows, err := s.dbAccess.Query("SELECT * FROM getnoteadvertisementsbyuserid('" + userid + "')")
 
 			if err != nil {
 				w.WriteHeader(500)
